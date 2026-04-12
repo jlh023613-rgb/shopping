@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shopping.mapper.ProductMapper">
+    <select id="findAll" resultType="com.example.shopping.entity.Product">
+        SELECT * FROM products WHERE status = 1
+    </select>
+    
+    <select id="findRandom" resultType="com.example.shopping.entity.Product">
+        SELECT * FROM products WHERE status = 1 ORDER BY RAND() LIMIT #{limit}
+    </select>
+    
+    <select id="findByCategory" resultType="com.example.shopping.entity.Product">
+        SELECT * FROM products WHERE status = 1 AND category = #{category}
+    </select>
+    
+    <select id="findByNameContainingIgnoreCase" resultType="com.example.shopping.entity.Product">
+        SELECT * FROM products WHERE status = 1 AND LOWER(name) LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+    </select>
+    
+    <select id="findById" resultType="com.example.shopping.entity.Product">
+        SELECT * FROM products WHERE id = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="com.example.shopping.entity.Product" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO products (name, category, price, original_price, stock, image_url, description, status, merchant_id)
+        VALUES (#{name}, #{category}, #{price}, #{originalPrice}, #{stock}, #{imageUrl}, #{description}, #{status}, #{merchantId})
+    </insert>
+    
+    <update id="update" parameterType="com.example.shopping.entity.Product">
+        UPDATE products SET 
+            name = #{name},
+            category = #{category},
+            price = #{price},
+            original_price = #{originalPrice},
+            stock = #{stock},
+            image_url = #{imageUrl},
+            description = #{description},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="delete">
+        DELETE FROM products WHERE id = #{id}
+    </delete>
+</mapper>

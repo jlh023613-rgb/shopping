@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout :: head}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<style>
+    body {
+        font-family: 'Noto Sans SC', sans-serif;
+        background-color: #f3f4f6;
+    }
+
+    .carousel-custom {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .banner-gradient-1 { background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); }
+    .banner-gradient-2 { background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); }
+    .banner-gradient-3 { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+
+    .category-sidebar {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        position: sticky;
+        top: 80px;
+    }
+    .category-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        padding: 16px 20px 12px;
+        border-bottom: 1px solid #f1f3f4;
+        margin: 0;
+    }
+    .category-list {
+        list-style: none;
+        padding: 8px 0;
+        margin: 0;
+    }
+    .category-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: #495057;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .category-item:hover {
+        background: linear-gradient(90deg, #f8f4ff 0%, #fff 100%);
+        color: #764ba2;
+    }
+    .category-item.active {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    .category-item i {
+        width: 24px;
+        margin-right: 12px;
+        font-size: 1.1rem;
+    }
+    .category-item span {
+        font-size: 0.9rem;
+    }
+
+    .product-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .img-wrapper {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .product-img {
+        transition: transform 0.5s ease;
+        object-fit: contain;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 180px;
+    }
+    .product-card:hover .product-img {
+        transform: scale(1.05);
+    }
+
+    .product-title {
+        font-size: 0.95rem;
+        color: #333;
+        font-weight: 500;
+    }
+    .product-price {
+        font-size: 1.2rem;
+        color: #e53e3e;
+        font-weight: 700;
+    }
+    
+    .btn-buy {
+        background-color: #f3f4f6;
+        color: #333;
+        border: none;
+        transition: all 0.2s;
+    }
+    .product-card:hover .btn-buy {
+        background: linear-gradient(to right, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+</style>
+
+<nav th:replace="~{layout :: nav}"></nav>
+
+<main class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-2 col-md-3">
+            <div class="category-sidebar">
+                <h5 class="category-title"><i class="bi bi-grid me-2"></i>商品分类</h5>
+                <ul class="category-list">
+                    <li class="category-item" th:classappend="${category == null or category.isEmpty()} ? 'active'" onclick="filterCategory('')">
+                        <i class="bi bi-grid-fill"></i>
+                        <span>全部商品</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'phone'} ? 'active'" onclick="filterCategory('phone')">
+                        <i class="bi bi-phone"></i>
+                        <span>手机数码</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'computer'} ? 'active'" onclick="filterCategory('computer')">
+                        <i class="bi bi-laptop"></i>
+                        <span>电脑办公</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'appliance'} ? 'active'" onclick="filterCategory('appliance')">
+                        <i class="bi bi-tv"></i>
+                        <span>家用电器</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'clothes'} ? 'active'" onclick="filterCategory('clothes')">
+                        <i class="bi bi-bag"></i>
+                        <span>服饰鞋包</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'food'} ? 'active'" onclick="filterCategory('food')">
+                        <i class="bi bi-cup-hot"></i>
+                        <span>食品生鲜</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'book'} ? 'active'" onclick="filterCategory('book')">
+                        <i class="bi bi-book"></i>
+                        <span>图书文具</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'beauty'} ? 'active'" onclick="filterCategory('beauty')">
+                        <i class="bi bi-palette"></i>
+                        <span>美妆个护</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'sports'} ? 'active'" onclick="filterCategory('sports')">
+                        <i class="bi bi-bicycle"></i>
+                        <span>运动户外</span>
+                    </li>
+                    <li class="category-item" th:classappend="${category == 'home'} ? 'active'" onclick="filterCategory('home')">
+                        <i class="bi bi-house"></i>
+                        <span>家居家装</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-10 col-md-9">
+            <div id="carouselMain" class="carousel slide carousel-custom mb-4" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselMain" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#carouselMain" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#carouselMain" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="d-flex align-items-center justify-content-center banner-gradient-1" style="height: 280px;">
+                            <div class="text-center text-white">
+                                <h2 class="fw-bold mb-3">春季新品发布</h2>
+                                <p class="fs-5">精选好物 限时优惠 5折起</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="d-flex align-items-center justify-content-center banner-gradient-2" style="height: 280px;">
+                            <div class="text-center text-white">
+                                <h2 class="fw-bold mb-3">数码狂欢节</h2>
+                                <p class="fs-5">最新数码产品 现货速发</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="d-flex align-items-center justify-content-center banner-gradient-3" style="height: 280px;">
+                            <div class="text-center text-white">
+                                <h2 class="fw-bold mb-3">品质生活指南</h2>
+                                <p class="fs-5">提升幸福感的100件好物</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselMain" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselMain" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="section-header">
+                <h5 class="section-title border-start border-4 border-primary ps-3 m-0">
+                    <span th:if="${keyword != null and !keyword.isEmpty()}" th:text="'搜索: ' + ${keyword}">搜索结果</span>
+                    <span th:if="${category != null and !category.isEmpty() and (keyword == null or keyword.isEmpty())}">
+                        <span th:switch="${category}">
+                            <span th:case="'phone'">📱 手机数码</span>
+                            <span th:case="'computer'">💻 电脑办公</span>
+                            <span th:case="'appliance'">📺 家用电器</span>
+                            <span th:case="'clothes'">👗 服饰鞋包</span>
+                            <span th:case="'food'">🍔 食品生鲜</span>
+                            <span th:case="'book'">📚 图书文具</span>
+                            <span th:case="'beauty'">💄 美妆个护</span>
+                            <span th:case="'sports'">⚽ 运动户外</span>
+                            <span th:case="'home'">🏠 家居家装</span>
+                            <span th:case="*">🔥 热门推荐</span>
+                        </span>
+                    </span>
+                    <span th:if="${(category == null or category.isEmpty()) and (keyword == null or keyword.isEmpty())}">🔥 热门推荐</span>
+                </h5>
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" th:if="${products != null and !products.isEmpty()}">
+                <div th:each="p : ${products}" class="col">
+                    <div class="card product-card h-100 shadow-sm">
+                        <a th:href="@{/product/{id}(id=${p.id})}" class="text-decoration-none">
+                            <div class="img-wrapper d-flex align-items-center justify-content-center">
+                                <img th:if="${p.imageUrl != null}" th:src="${p.imageUrl}" class="product-img" alt="商品图">
+                                <div th:unless="${p.imageUrl != null}" class="text-secondary text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-image mb-2" viewBox="0 0 16 16">
+                                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                        <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                    <div class="small">暂无图片</div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <div class="card-body d-flex flex-column">
+                            <a th:href="@{/product/{id}(id=${p.id})}" class="text-decoration-none">
+                                <h6 class="card-title product-title text-truncate mb-1" th:text="${p.name}">商品名称</h6>
+                            </a>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex align-items-baseline gap-2 mb-2">
+                                    <span class="product-price" th:text="'¥' + ${p.price}">¥99.00</span>
+                                    <span th:if="${p.originalPrice != null and p.originalPrice > p.price}" class="text-muted text-decoration-line-through small" th:text="'¥' + ${p.originalPrice}">¥199.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-light text-secondary" th:if="${p.stock != null and p.stock > 0}" th:text="'库存 ' + ${p.stock}">库存 100</span>
+                                    <span class="badge bg-light text-secondary" th:unless="${p.stock != null and p.stock > 0}">暂无库存</span>
+                                    <a th:href="@{/product/{id}(id=${p.id})}" class="btn btn-sm btn-buy rounded-pill px-3">
+                                        购买
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center py-5" th:if="${products == null or products.isEmpty()}">
+                <div class="bg-white p-5 rounded-3 shadow-sm d-inline-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#dee2e6" class="bi bi-box-seam mb-3" viewBox="0 0 16 16">
+                      <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-1.114 0L.629 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                    </svg>
+                    <p class="text-secondary mb-0">该分类暂无商品</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:replace="~{layout :: scripts}"></script>
+<script>
+    function filterCategory(cat) {
+        var url = new URL(window.location.href);
+        if (cat) {
+            url.searchParams.set('category', cat);
+        } else {
+            url.searchParams.delete('category');
+        }
+        url.searchParams.delete('keyword');
+        window.location.href = url.toString();
+    }
+</script>
+</body>
+</html>
