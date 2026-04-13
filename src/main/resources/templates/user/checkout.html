@@ -3,94 +3,114 @@
 <head th:replace="~{layout :: head}"></head>
 <body class="bg-light">
 <style>
-    body { font-family: 'Noto Sans SC', sans-serif; background-color: #f3f4f6; }
-    .checkout-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1rem; }
-    .product-img { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; background: #f8f9fa; }
-    .address-card { border: 2px solid #e9ecef; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
-    .address-card:hover { border-color: #667eea; }
-    .address-card.selected { border-color: #667eea; background: #f8f9ff; }
-    .btn-submit { background: linear-gradient(to right, #667eea, #764ba2); color: white; border: none; padding: 12px 40px; border-radius: 25px; font-weight: 600; }
-    .btn-submit:hover { color: white; opacity: 0.9; }
+    :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+    body { background-color: var(--bg); }
+    .page-title { font-size: 16px; font-weight: 600; color: var(--text-dark); padding-left: 10px; border-left: 3px solid var(--primary); margin-bottom: 16px; }
+    .section-card { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+    .section-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .address-card { border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; cursor: pointer; transition: all 0.15s; }
+    .address-card:hover { border-color: var(--primary); }
+    .address-card.selected { border-color: var(--primary); background: var(--primary-light); }
+    .address-name { font-weight: 600; font-size: 13px; }
+    .address-phone { color: var(--text-muted); font-size: 12px; margin-left: 8px; }
+    .address-detail { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .address-default { background: var(--primary); color: white; font-size: 10px; padding: 1px 6px; border-radius: 2px; margin-left: 6px; }
+    .product-img { width: 50px; height: 50px; object-fit: contain; border: 1px solid var(--border); border-radius: 2px; background: #fff; }
+    .product-name { font-size: 13px; color: var(--text-dark); font-weight: 500; }
+    .product-spec { font-size: 12px; color: var(--text-muted); }
+    .product-price { font-size: 14px; color: var(--primary); font-weight: 700; }
+    .product-qty { font-size: 12px; color: var(--text-muted); margin-left: 4px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; color: var(--text-secondary); }
+    .summary-total { display: flex; justify-content: space-between; padding: 8px 0 0; border-top: 1px solid var(--border); margin-top: 8px; }
+    .summary-total-label { font-weight: 600; font-size: 14px; color: var(--text-dark); }
+    .summary-total-price { font-size: 20px; color: var(--primary); font-weight: 700; }
+    .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 2px; font-weight: 600; font-size: 14px; width: 100%; cursor: pointer; transition: background 0.15s; }
+    .btn-submit:hover { background: var(--primary-dark); color: white; }
+    .btn-back { background: white; color: var(--text-secondary); border: 1px solid var(--border); padding: 8px 0; border-radius: 2px; font-size: 13px; width: 100%; cursor: pointer; }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); }
+    .item-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+    .item-row:last-child { border-bottom: none; }
 </style>
 
 <nav th:replace="~{layout :: nav}"></nav>
 
-<main class="container py-4">
-    <h4 class="fw-bold mb-4"><i class="bi bi-bag-check me-2"></i>确认订单</h4>
-
+<main class="container py-3">
+    <div class="page-title">确认订单</div>
     <div class="row">
         <div class="col-md-8">
-            <div class="checkout-card">
-                <h6 class="fw-bold mb-3"><i class="bi bi-geo-alt me-2"></i>收货地址</h6>
+            <div class="section-card">
+                <div class="section-title">收货地址</div>
                 <div th:if="${addresses == null or addresses.isEmpty()}" class="text-center py-3">
-                    <p class="text-secondary mb-2">暂无收货地址</p>
-                    <a href="/user/address" class="btn btn-outline-primary btn-sm">添加地址</a>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 8px;">暂无收货地址</p>
+                    <a href="/user/address" style="color: var(--primary); font-size: 13px;">添加地址</a>
                 </div>
                 <div th:if="${addresses != null and !addresses.isEmpty()}" class="row g-2">
                     <div th:each="addr, stat : ${addresses}" class="col-md-6">
-                        <div class="address-card" th:classappend="${stat.first} ? 'selected'" 
-                             th:attr="data-id=${addr.id}" onclick="selectAddress(this)">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <strong th:text="${addr.receiverName}">姓名</strong>
-                                    <span class="text-secondary ms-2" th:text="${addr.receiverPhone}">电话</span>
-                                    <span th:if="${addr.isDefault}" class="badge bg-primary ms-2">默认</span>
-                                </div>
+                        <div class="address-card" th:classappend="${stat.first} ? 'selected'" th:attr="data-id=${addr.id}" onclick="selectAddress(this)">
+                            <div>
+                                <span class="address-name" th:text="${addr.receiverName}">姓名</span>
+                                <span class="address-phone" th:text="${addr.receiverPhone}">电话</span>
+                                <span th:if="${addr.isDefault}" class="address-default">默认</span>
                             </div>
-                            <small class="text-secondary" th:text="${addr.province + addr.city + addr.district + addr.detailAddress}">地址</small>
+                            <div class="address-detail" th:text="${addr.province + addr.city + addr.district + addr.detailAddress}">地址</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="checkout-card">
-                <h6 class="fw-bold mb-3"><i class="bi bi-bag me-2"></i>商品清单</h6>
-                <div th:each="item : ${cartItems}" class="d-flex align-items-center border-bottom pb-3 mb-3">
+            <div class="section-card">
+                <div class="section-title">商品清单</div>
+                <div th:each="item : ${cartItems}" class="item-row">
                     <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}" class="product-img">
-                    <div class="ms-3 flex-grow-1">
-                        <h6 class="mb-1" th:text="${item.productName}">商品名称</h6>
-                        <div class="small text-secondary">
+                    <div style="margin-left: 10px; flex-grow: 1; min-width: 0;">
+                        <div class="product-name" th:text="${item.productName}">商品名称</div>
+                        <div class="product-spec">
                             <span th:if="${item.selectedColor != null}" th:text="${item.selectedColor}"></span>
                             <span th:if="${item.selectedStorage != null}" th:text="${item.selectedStorage}"></span>
                         </div>
-                        <div class="mt-1">
-                            <span class="text-danger fw-bold" th:text="'¥' + ${item.unitPrice != null ? item.unitPrice : item.price}"></span>
-                            <span class="text-secondary ms-2" th:text="'x' + ${item.quantity}"></span>
-                        </div>
                     </div>
-                    <div class="text-end">
-                        <small class="text-secondary">小计：</small>
-                        <span class="text-danger fw-bold" th:text="'¥' + ${(item.unitPrice != null ? item.unitPrice : item.price) * item.quantity}"></span>
+                    <div style="text-align: right; flex-shrink: 0; margin-left: 12px;">
+                        <div>
+                            <span class="product-price" th:text="'¥' + ${item.unitPrice != null ? item.unitPrice : item.price}"></span>
+                            <span class="product-qty" th:text="'x' + ${item.quantity}"></span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">小计：<span style="color: var(--primary); font-weight: 600;" th:text="'¥' + ${(item.unitPrice != null ? item.unitPrice : item.price) * item.quantity}"></span></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="checkout-card">
-                <h6 class="fw-bold mb-3">订单结算</h6>
-                <div class="d-flex justify-content-between mb-2">
+            <div class="section-card" style="position: sticky; top: 60px;">
+                <div class="section-title">订单结算</div>
+                <div class="summary-row">
                     <span>商品数量</span>
                     <span th:text="${cartItems.size()} + ' 件'">0 件</span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
+                <div class="summary-row">
                     <span>商品金额</span>
-                    <span class="text-danger" th:text="'¥' + ${total}">¥0.00</span>
+                    <span style="color: var(--primary);" th:text="'¥' + ${total}">¥0.00</span>
                 </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-3">
-                    <span class="fw-bold">应付金额</span>
-                    <span class="text-danger fw-bold fs-5" th:text="'¥' + ${total}">¥0.00</span>
+                <div class="summary-row">
+                    <span>运费</span>
+                    <span style="color: #2e7d32;">免运费</span>
+                </div>
+                <div class="summary-total">
+                    <span class="summary-total-label">应付金额</span>
+                    <span class="summary-total-price" th:text="'¥' + ${total}">¥0.00</span>
                 </div>
                 <input type="hidden" id="cartIds" th:value="${cartIds}">
                 <input type="hidden" id="addressId" th:value="${addresses != null and !addresses.isEmpty()} ? ${addresses[0].id} : ''">
-                <button type="button" class="btn btn-submit w-100" onclick="submitOrder()">提交订单</button>
-                <a href="/cart" class="btn btn-outline-secondary w-100 mt-2">返回购物车</a>
+                <div style="margin-top: 16px;">
+                    <button type="button" class="btn-submit" onclick="submitOrder()">提交订单</button>
+                    <a href="/cart" class="btn-back" style="display: block; text-align: center; margin-top: 8px; text-decoration: none;">返回购物车</a>
+                </div>
             </div>
         </div>
     </div>
 </main>
 
+<footer th:replace="~{layout :: footer}"></footer>
 <script th:replace="~{layout :: scripts}"></script>
 <script>
     function selectAddress(el) {

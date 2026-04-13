@@ -42,4 +42,29 @@
     <delete id="delete">
         DELETE FROM products WHERE id = #{id}
     </delete>
+
+    <update id="decreaseStock">
+        UPDATE products SET stock = stock - #{quantity}
+        WHERE id = #{productId} AND stock >= #{quantity}
+    </update>
+
+    <select id="findByPage" resultType="com.example.shopping.entity.Product">
+        SELECT * FROM products 
+        WHERE status = 1 
+        <if test="category != null and category != ''">
+            AND category = #{category}
+        </if>
+        AND (merchant_id IS NULL OR merchant_id IN (SELECT id FROM merchants WHERE status = 'approved'))
+        ORDER BY id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countByCategory" resultType="int">
+        SELECT COUNT(*) FROM products 
+        WHERE status = 1 
+        <if test="category != null and category != ''">
+            AND category = #{category}
+        </if>
+        AND (merchant_id IS NULL OR merchant_id IN (SELECT id FROM merchants WHERE status = 'approved'))
+    </select>
 </mapper>

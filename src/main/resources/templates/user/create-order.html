@@ -3,86 +3,102 @@
 <head th:replace="~{layout :: head}"></head>
 <body class="bg-light">
 <style>
-    body { font-family: 'Noto Sans SC', sans-serif; background-color: #f3f4f6; }
-    .order-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1rem; }
-    .product-img { width: 100px; height: 100px; object-fit: contain; border-radius: 8px; background: #f8f9fa; }
-    .address-card { border: 2px solid #e9ecef; border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
-    .address-card:hover { border-color: #667eea; }
-    .address-card.selected { border-color: #667eea; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
-    .btn-submit { background: linear-gradient(to right, #667eea, #764ba2); color: white; border: none; padding: 12px 40px; border-radius: 25px; font-weight: 600; }
-    .btn-submit:hover { color: white; opacity: 0.9; }
+    :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+    body { background-color: var(--bg); }
+    .page-title { font-size: 16px; font-weight: 600; color: var(--text-dark); padding-left: 10px; border-left: 3px solid var(--primary); margin-bottom: 16px; }
+    .section-card { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+    .section-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .address-card { border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; cursor: pointer; transition: all 0.15s; }
+    .address-card:hover { border-color: var(--primary); }
+    .address-card.selected { border-color: var(--primary); background: var(--primary-light); }
+    .address-name { font-weight: 600; font-size: 13px; }
+    .address-phone { color: var(--text-muted); font-size: 12px; margin-left: 8px; }
+    .address-detail { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .address-default { background: var(--primary); color: white; font-size: 10px; padding: 1px 6px; border-radius: 2px; margin-left: 6px; }
+    .product-img { width: 80px; height: 80px; object-fit: contain; border: 1px solid var(--border); border-radius: 2px; background: #fff; }
+    .product-name { font-size: 14px; color: var(--text-dark); font-weight: 500; }
+    .product-merchant { font-size: 12px; color: var(--text-muted); }
+    .product-price { font-size: 18px; color: var(--primary); font-weight: 700; }
+    .product-qty { font-size: 13px; color: var(--text-muted); margin-left: 6px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; color: var(--text-secondary); }
+    .summary-total { display: flex; justify-content: space-between; padding: 8px 0 0; border-top: 1px solid var(--border); margin-top: 8px; }
+    .summary-total-label { font-weight: 600; font-size: 14px; color: var(--text-dark); }
+    .summary-total-price { font-size: 22px; color: var(--primary); font-weight: 700; }
+    .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 2px; font-weight: 600; font-size: 14px; width: 100%; cursor: pointer; transition: background 0.15s; }
+    .btn-submit:hover { background: var(--primary-dark); color: white; }
 </style>
 
 <nav th:replace="~{layout :: nav}"></nav>
 
-<main class="container py-4">
-    <h4 class="fw-bold mb-4"><i class="bi bi-cart-check me-2"></i>确认订单</h4>
-    
+<main class="container py-3">
+    <div class="page-title">确认订单</div>
     <div class="row">
         <div class="col-lg-8">
-            <div class="order-card">
-                <h6 class="fw-bold mb-3"><i class="bi bi-geo-alt me-2"></i>收货地址</h6>
-                <div th:if="${addresses == null or addresses.isEmpty()}" class="text-center py-4">
-                    <p class="text-secondary">暂无收货地址</p>
-                    <a href="/user/addresses" class="btn btn-primary">添加地址</a>
+            <div class="section-card">
+                <div class="section-title">收货地址</div>
+                <div th:if="${addresses == null or addresses.isEmpty()}" class="text-center py-3">
+                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 8px;">暂无收货地址</p>
+                    <a href="/user/addresses" style="color: var(--primary); font-size: 13px;">添加地址</a>
                 </div>
-                <div th:if="${addresses != null and !addresses.isEmpty()}" class="row g-3">
-                    <div th:each="addr, stat : ${addresses}" class="col-md-6">
+                <div th:if="${addresses != null and !addresses.isEmpty()}" class="row g-2">
+                    <div th:each="addr : ${addresses}" class="col-md-6">
                         <div class="address-card" th:classappend="${addr.isDefault} ? 'selected'" th:attr="data-id=${addr.id}" onclick="selectAddress(this)">
-                            <div class="d-flex justify-content-between">
-                                <strong th:text="${addr.receiverName}">收货人</strong>
-                                <span th:if="${addr.isDefault}" class="badge bg-primary">默认</span>
+                            <div>
+                                <span class="address-name" th:text="${addr.receiverName}">收货人</span>
+                                <span th:if="${addr.isDefault}" class="address-default">默认</span>
                             </div>
-                            <div class="text-secondary small mt-1" th:text="${addr.receiverPhone}"></div>
-                            <div class="text-secondary small" th:text="${addr.province + addr.city + addr.district + addr.detailAddress}"></div>
+                            <div class="address-phone" th:text="${addr.receiverPhone}"></div>
+                            <div class="address-detail" th:text="${addr.province + addr.city + addr.district + addr.detailAddress}"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="order-card">
-                <h6 class="fw-bold mb-3"><i class="bi bi-bag me-2"></i>商品信息</h6>
-                <div class="d-flex align-items-center">
+            <div class="section-card">
+                <div class="section-title">商品信息</div>
+                <div style="display: flex; align-items: center;">
                     <img th:if="${product.imageUrl != null}" th:src="${product.imageUrl}" class="product-img">
-                    <div class="ms-3 flex-grow-1">
-                        <h6 th:text="${product.name}">商品名称</h6>
-                        <div class="text-secondary small" th:text="'商家: ' + ${product.merchantId != null ? '店铺商品' : '自营'}"></div>
-                        <div class="mt-2">
-                            <span class="text-danger fw-bold" th:text="'¥' + ${product.price}"></span>
-                            <span class="text-secondary ms-2" th:text="'x' + ${quantity}"></span>
+                    <div style="margin-left: 12px; flex-grow: 1;">
+                        <div class="product-name" th:text="${product.name}">商品名称</div>
+                        <div class="product-merchant" th:text="'商家: ' + ${product.merchantId != null ? '店铺商品' : '自营'}"></div>
+                        <div style="margin-top: 6px;">
+                            <span class="product-price" th:text="'¥' + ${product.price}"></span>
+                            <span class="product-qty" th:text="'x' + ${quantity}"></span>
                         </div>
                     </div>
-                    <div class="text-end">
-                        <small class="text-secondary">小计：</small>
-                        <span class="text-danger fw-bold fs-5" th:text="'¥' + ${totalPrice}"></span>
+                    <div style="text-align: right; flex-shrink: 0;">
+                        <div style="font-size: 12px; color: var(--text-muted);">小计</div>
+                        <div style="font-size: 18px; color: var(--primary); font-weight: 700;" th:text="'¥' + ${totalPrice}"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="order-card">
-                <h6 class="fw-bold mb-3">订单结算</h6>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-secondary">商品金额</span>
+            <div class="section-card" style="position: sticky; top: 60px;">
+                <div class="section-title">订单结算</div>
+                <div class="summary-row">
+                    <span>商品金额</span>
                     <span th:text="'¥' + ${totalPrice}"></span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-secondary">运费</span>
-                    <span class="text-success">免运费</span>
+                <div class="summary-row">
+                    <span>运费</span>
+                    <span style="color: #2e7d32;">免运费</span>
                 </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-3">
-                    <span class="fw-bold">应付金额</span>
-                    <span class="text-danger fw-bold fs-4" th:text="'¥' + ${totalPrice}"></span>
+                <div class="summary-total">
+                    <span class="summary-total-label">应付金额</span>
+                    <span class="summary-total-price" th:text="'¥' + ${totalPrice}"></span>
                 </div>
                 <input type="hidden" id="selectedAddressId" th:value="${addresses != null and !addresses.isEmpty() ? addresses[0].id : ''}">
-                <button type="button" class="btn btn-submit w-100" onclick="submitOrder()">提交订单</button>
+                <div style="margin-top: 16px;">
+                    <button type="button" class="btn-submit" onclick="submitOrder()">提交订单</button>
+                </div>
             </div>
         </div>
     </div>
 </main>
 
+<footer th:replace="~{layout :: footer}"></footer>
 <script th:replace="~{layout :: scripts}"></script>
 <script>
     function selectAddress(el) {

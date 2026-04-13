@@ -25,6 +25,8 @@ public class IndexController {
     private final ProductImageMapper productImageMapper;
     private final ShopMapper shopMapper;
 
+    private static final int PAGE_SIZE = 12;
+
     public IndexController(ProductMapper productMapper, ProductImageMapper productImageMapper, ShopMapper shopMapper) {
         this.productMapper = productMapper;
         this.productImageMapper = productImageMapper;
@@ -35,22 +37,64 @@ public class IndexController {
     public String index(@RequestParam(required = false) String keyword,
                         @RequestParam(required = false) String category,
                         @RequestParam(required = false) Long shopId,
+                        @RequestParam(defaultValue = "1") int page,
                         HttpSession session,
                         Model model) {
-        List<Product> products;
+        User user = (User) session.getAttribute("user");
+        List<Shop> shops = shopMapper.findAll();
+
         if (keyword != null && !keyword.isBlank()) {
-            products = productMapper.findByNameContainingIgnoreCase(keyword.trim());
-        } else if (category != null && !category.isBlank()) {
-            products = productMapper.findByCategory(category.trim());
-        } else if (shopId != null) {
-            products = productMapper.findByMerchantId(shopId);
-        } else {
-            products = productMapper.findRandom(24);
-            if (products.isEmpty()) {
-                products = productMapper.findAll();
+            List<Product> products = productMapper.findByNameContainingIgnoreCase(keyword.trim());
+            Map<Long, List<ProductImage>> productImages = new HashMap<>();
+            for (Product p : products) {
+                List<ProductImage> images = productImageMapper.findByProductId(p.getId());
+                if (!images.isEmpty()) {
+                    productImages.put(p.getId(), images);
+                }
             }
+            model.addAttribute("products", products);
+            model.addAttribute("productImages", productImages);
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("category", null);
+            model.addAttribute("shopId", null);
+            model.addAttribute("currentPage", 1);
+            model.addAttribute("totalPages", 1);
+            model.addAttribute("shops", shops);
+            model.addAttribute("user", user);
+            return "index";
         }
-        
+
+        if (shopId != null) {
+            List<Product> products = productMapper.findByMerchantId(shopId);
+            Map<Long, List<ProductImage>> productImages = new HashMap<>();
+            for (Product p : products) {
+                List<ProductImage> images = productImageMapper.findByProductId(p.getId());
+                if (!images.isEmpty()) {
+                    productImages.put(p.getId(), images);
+                }
+            }
+            model.addAttribute("products", products);
+            model.addAttribute("productImages", productImages);
+            model.addAttribute("keyword", null);
+            model.addAttribute("category", null);
+            model.addAttribute("shopId", shopId);
+            model.addAttribute("currentPage", 1);
+            model.addAttribute("totalPages", 1);
+            model.addAttribute("shops", shops);
+            model.addAttribute("user", user);
+            return "index";
+        }
+
+        String effectiveCategory = (category != null && !category.isBlank()) ? category.trim() : null;
+        int total = productMapper.countByCategory(effectiveCategory);
+        int totalPages = (int) Math.ceil((double) total / PAGE_SIZE);
+        if (totalPages < 1) totalPages = 1;
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int offset = (page - 1) * PAGE_SIZE;
+        List<Product> products = productMapper.findByPage(effectiveCategory, offset, PAGE_SIZE);
+
         Map<Long, List<ProductImage>> productImages = new HashMap<>();
         for (Product p : products) {
             List<ProductImage> images = productImageMapper.findByProductId(p.getId());
@@ -58,17 +102,15 @@ public class IndexController {
                 productImages.put(p.getId(), images);
             }
         }
-        
-        List<Shop> shops = shopMapper.findAll();
-        
-        User user = (User) session.getAttribute("user");
-        
+
         model.addAttribute("products", products);
         model.addAttribute("productImages", productImages);
+        model.addAttribute("keyword", null);
+        model.addAttribute("category", effectiveCategory);
+        model.addAttribute("shopId", null);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("shops", shops);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("category", category);
-        model.addAttribute("shopId", shopId);
         model.addAttribute("user", user);
         return "index";
     }

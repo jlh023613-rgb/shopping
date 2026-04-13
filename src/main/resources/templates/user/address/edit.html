@@ -7,259 +7,126 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-        }
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .card-header {
-            background-color: #4CAF50;
-            color: white;
-            font-weight: 600;
-            padding: 16px 24px;
-        }
-        .card-body {
-            padding: 24px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            display: block;
-        }
-        .form-control {
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            padding: 10px 12px;
-            font-size: 16px;
-        }
-        .form-control:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
-        }
-        .btn {
-            border-radius: 6px;
-            font-weight: 500;
-            padding: 10px 24px;
-            font-size: 16px;
-        }
-        .btn-primary {
-            background-color: #4CAF50;
-            border-color: #4CAF50;
-        }
-        .btn-primary:hover {
-            background-color: #45a049;
-            border-color: #45a049;
-        }
-        .btn-outline-secondary {
-            border-color: #666;
-            color: #666;
-        }
-        .btn-outline-secondary:hover {
-            background-color: #666;
-            color: white;
-        }
-        .form-check {
-            margin-top: 12px;
-        }
-        .form-check-label {
-            font-weight: 400;
-            color: #555;
-        }
-        .form-check-input:checked {
-            background-color: #4CAF50;
-            border-color: #4CAF50;
-        }
-        .alert {
-            margin-bottom: 20px;
-            border-radius: 6px;
-        }
+        :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+        body { background-color: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 14px; color: var(--text-dark); }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { color: var(--primary-dark); }
+        .top-nav { background: white; border-bottom: 2px solid var(--primary); padding: 0; }
+        .top-nav .container { height: 50px; display: flex; align-items: center; justify-content: space-between; }
+        .top-nav .logo { color: var(--primary); font-weight: 700; font-size: 16px; }
+        .top-nav .nav-links { display: flex; align-items: center; gap: 16px; font-size: 12px; }
+        .top-nav .nav-links a { color: var(--text-secondary); }
+        .top-nav .nav-links a:hover { color: var(--primary); }
+        .form-container { max-width: 560px; margin: 24px auto; }
+        .form-card { background: white; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+        .form-header { background: var(--primary); color: white; font-weight: 600; padding: 12px 20px; font-size: 15px; }
+        .form-body { padding: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { font-weight: 600; color: var(--text-dark); margin-bottom: 6px; display: block; font-size: 13px; }
+        .form-control { border-radius: 2px; border: 1px solid var(--border); padding: 8px 10px; font-size: 13px; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 0.15rem rgba(255,68,0,0.15); }
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); border-radius: 2px; font-size: 13px; padding: 8px 20px; }
+        .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); }
+        .btn-outline-secondary { border-color: var(--border); color: var(--text-secondary); border-radius: 2px; font-size: 13px; padding: 8px 20px; }
+        .btn-outline-secondary:hover { background-color: var(--text-secondary); color: white; }
+        .form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
+        .form-check-label { font-weight: 400; color: var(--text-secondary); font-size: 13px; }
+        footer { background: #333; color: #aaa; text-align: center; padding: 16px 0; margin-top: 40px; font-size: 12px; }
     </style>
 </head>
 <body>
+<nav class="top-nav">
     <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <h2>编辑收货地址</h2>
-            </div>
-            <div class="card-body">
-                <form action="/user/address/edit" method="post" onsubmit="return validateForm();">
-                    <input type="hidden" name="id" th:value="${address.id}">
-                    <div class="form-group">
-                        <label for="name" class="form-label">收货人姓名</label>
-                        <input type="text" class="form-control" id="name" name="name" th:value="${address.name}" placeholder="请输入收货人姓名" required>
-                        <div id="nameError" class="text-danger small mt-1"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone" class="form-label">手机号</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" th:value="${address.phone}" placeholder="请输入手机号" required>
-                        <div id="phoneError" class="text-danger small mt-1"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="province" class="form-label">省份</label>
-                            <input type="text" class="form-control" id="province" name="province" th:value="${address.province}" placeholder="请输入省份" required>
-                            <div id="provinceError" class="text-danger small mt-1"></div>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="city" class="form-label">城市</label>
-                            <input type="text" class="form-control" id="city" name="city" th:value="${address.city}" placeholder="请输入城市" required>
-                            <div id="cityError" class="text-danger small mt-1"></div>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="district" class="form-label">区县</label>
-                            <input type="text" class="form-control" id="district" name="district" th:value="${address.district}" placeholder="请输入区县" required>
-                            <div id="districtError" class="text-danger small mt-1"></div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="detail" class="form-label">详细地址</label>
-                        <textarea class="form-control" id="detail" name="detail" rows="3" placeholder="请输入详细地址" required th:text="${address.detail}"></textarea>
-                        <div id="detailError" class="text-danger small mt-1"></div>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isDefault" name="isDefault" value="true" th:checked="${address.isDefault}">
-                        <label class="form-check-label" for="isDefault">设为默认地址</label>
-                    </div>
-                    <div class="d-flex justify-content-end gap-3 mt-4">
-                        <a href="/user/center" class="btn btn-outline-secondary">取消</a>
-                        <button type="submit" class="btn btn-primary">保存</button>
-                    </div>
-                </form>
-            </div>
+        <a href="/" class="logo">网上商城</a>
+        <div class="nav-links">
+            <a href="/user/center">用户中心</a>
         </div>
     </div>
+</nav>
 
-    <script>
-        // 手机号验证
-        function validatePhone(phone) {
-            return /^1[3-9]\d{9}$/.test(phone);
-        }
-        
-        // 表单验证
-        function validateForm() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const province = document.getElementById('province').value;
-            const city = document.getElementById('city').value;
-            const district = document.getElementById('district').value;
-            const detail = document.getElementById('detail').value;
-            
-            let isValid = true;
-            
-            // 验证姓名
-            if (!name || name.trim() === '') {
-                document.getElementById('nameError').textContent = '收货人姓名不能为空';
-                isValid = false;
-            } else if (name.length < 2 || name.length > 20) {
-                document.getElementById('nameError').textContent = '收货人姓名长度必须为2-20位';
-                isValid = false;
-            } else {
-                document.getElementById('nameError').textContent = '';
-            }
-            
-            // 验证手机号
-            if (!phone || phone.trim() === '') {
-                document.getElementById('phoneError').textContent = '手机号不能为空';
-                isValid = false;
-            } else if (!validatePhone(phone)) {
-                document.getElementById('phoneError').textContent = '请输入正确的手机号';
-                isValid = false;
-            } else {
-                document.getElementById('phoneError').textContent = '';
-            }
-            
-            // 验证省份
-            if (!province || province.trim() === '') {
-                document.getElementById('provinceError').textContent = '省份不能为空';
-                isValid = false;
-            } else {
-                document.getElementById('provinceError').textContent = '';
-            }
-            
-            // 验证城市
-            if (!city || city.trim() === '') {
-                document.getElementById('cityError').textContent = '城市不能为空';
-                isValid = false;
-            } else {
-                document.getElementById('cityError').textContent = '';
-            }
-            
-            // 验证区县
-            if (!district || district.trim() === '') {
-                document.getElementById('districtError').textContent = '区县不能为空';
-                isValid = false;
-            } else {
-                document.getElementById('districtError').textContent = '';
-            }
-            
-            // 验证详细地址
-            if (!detail || detail.trim() === '') {
-                document.getElementById('detailError').textContent = '详细地址不能为空';
-                isValid = false;
-            } else if (detail.length < 5 || detail.length > 200) {
-                document.getElementById('detailError').textContent = '详细地址长度必须为5-200位';
-                isValid = false;
-            } else {
-                document.getElementById('detailError').textContent = '';
-            }
-            
-            return isValid;
-        }
-        
-        // 监听输入，实时验证
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value;
-            const errorElement = document.getElementById('nameError');
-            if (name) {
-                if (name.length < 2 || name.length > 20) {
-                    errorElement.textContent = '收货人姓名长度必须为2-20位';
-                } else {
-                    errorElement.textContent = '';
-                }
-            } else {
-                errorElement.textContent = '';
-            }
-        });
-        
-        document.getElementById('phone').addEventListener('input', function() {
-            const phone = this.value;
-            const errorElement = document.getElementById('phoneError');
-            if (phone) {
-                if (!validatePhone(phone)) {
-                    errorElement.textContent = '请输入正确的手机号';
-                } else {
-                    errorElement.textContent = '';
-                }
-            } else {
-                errorElement.textContent = '';
-            }
-        });
-        
-        document.getElementById('detail').addEventListener('input', function() {
-            const detail = this.value;
-            const errorElement = document.getElementById('detailError');
-            if (detail) {
-                if (detail.length < 5 || detail.length > 200) {
-                    errorElement.textContent = '详细地址长度必须为5-200位';
-                } else {
-                    errorElement.textContent = '';
-                }
-            } else {
-                errorElement.textContent = '';
-            }
-        });
-    </script>
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">编辑收货地址</div>
+        <div class="form-body">
+            <form action="/user/address/edit" method="post" onsubmit="return validateForm();">
+                <input type="hidden" name="id" th:value="${address.id}">
+                <div class="form-group">
+                    <label for="name" class="form-label">收货人姓名</label>
+                    <input type="text" class="form-control" id="name" name="name" th:value="${address.name}" placeholder="请输入收货人姓名" required>
+                    <div id="nameError" class="text-danger small mt-1"></div>
+                </div>
+                <div class="form-group">
+                    <label for="phone" class="form-label">手机号</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" th:value="${address.phone}" placeholder="请输入手机号" required>
+                    <div id="phoneError" class="text-danger small mt-1"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 form-group">
+                        <label for="province" class="form-label">省份</label>
+                        <input type="text" class="form-control" id="province" name="province" th:value="${address.province}" placeholder="请输入省份" required>
+                        <div id="provinceError" class="text-danger small mt-1"></div>
+                    </div>
+                    <div class="col-4 form-group">
+                        <label for="city" class="form-label">城市</label>
+                        <input type="text" class="form-control" id="city" name="city" th:value="${address.city}" placeholder="请输入城市" required>
+                        <div id="cityError" class="text-danger small mt-1"></div>
+                    </div>
+                    <div class="col-4 form-group">
+                        <label for="district" class="form-label">区县</label>
+                        <input type="text" class="form-control" id="district" name="district" th:value="${address.district}" placeholder="请输入区县" required>
+                        <div id="districtError" class="text-danger small mt-1"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="detail" class="form-label">详细地址</label>
+                    <textarea class="form-control" id="detail" name="detail" rows="2" placeholder="请输入详细地址" required th:text="${address.detail}"></textarea>
+                    <div id="detailError" class="text-danger small mt-1"></div>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="isDefault" name="isDefault" value="true" th:checked="${address.isDefault}">
+                    <label class="form-check-label" for="isDefault">设为默认地址</label>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/user/center" class="btn btn-outline-secondary">取消</a>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">&copy; 2024 网上商城 版权所有</div>
+</footer>
+
+<script>
+    function validatePhone(phone) { return /^1[3-9]\d{9}$/.test(phone); }
+    
+    function validateForm() {
+        var name = document.getElementById('name').value;
+        var phone = document.getElementById('phone').value;
+        var province = document.getElementById('province').value;
+        var city = document.getElementById('city').value;
+        var district = document.getElementById('district').value;
+        var detail = document.getElementById('detail').value;
+        var isValid = true;
+        if (!name || name.trim() === '') { document.getElementById('nameError').textContent = '收货人姓名不能为空'; isValid = false; }
+        else if (name.length < 2 || name.length > 20) { document.getElementById('nameError').textContent = '收货人姓名长度必须为2-20位'; isValid = false; }
+        else { document.getElementById('nameError').textContent = ''; }
+        if (!phone || phone.trim() === '') { document.getElementById('phoneError').textContent = '手机号不能为空'; isValid = false; }
+        else if (!validatePhone(phone)) { document.getElementById('phoneError').textContent = '请输入正确的手机号'; isValid = false; }
+        else { document.getElementById('phoneError').textContent = ''; }
+        if (!province || province.trim() === '') { document.getElementById('provinceError').textContent = '省份不能为空'; isValid = false; }
+        else { document.getElementById('provinceError').textContent = ''; }
+        if (!city || city.trim() === '') { document.getElementById('cityError').textContent = '城市不能为空'; isValid = false; }
+        else { document.getElementById('cityError').textContent = ''; }
+        if (!district || district.trim() === '') { document.getElementById('districtError').textContent = '区县不能为空'; isValid = false; }
+        else { document.getElementById('districtError').textContent = ''; }
+        if (!detail || detail.trim() === '') { document.getElementById('detailError').textContent = '详细地址不能为空'; isValid = false; }
+        else if (detail.length < 5 || detail.length > 200) { document.getElementById('detailError').textContent = '详细地址长度必须为5-200位'; isValid = false; }
+        else { document.getElementById('detailError').textContent = ''; }
+        return isValid;
+    }
+</script>
 </body>
 </html>

@@ -98,6 +98,18 @@ public class UserOrderController {
                 return result;
             }
 
+            if (product.getStock() == null || product.getStock() <= 0) {
+                result.put("success", false);
+                result.put("message", "库存不足");
+                return result;
+            }
+
+            if (quantity > product.getStock()) {
+                result.put("success", false);
+                result.put("message", "库存不足，当前库存: " + product.getStock());
+                return result;
+            }
+
             if (product.getMerchantId() != null) {
                 Merchant merchant = merchantMapper.findById(product.getMerchantId());
                 if (merchant != null && ("closed".equals(merchant.getStatus()) || "pending".equals(merchant.getStatus()))) {
@@ -143,6 +155,14 @@ public class UserOrderController {
             order.setReceiverAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
 
             orderMapper.insert(order);
+
+            int rows = productMapper.decreaseStock(productId, quantity);
+            if (rows == 0) {
+                result.put("success", false);
+                result.put("message", "库存不足，下单失败");
+                return result;
+            }
+
             result.put("success", true);
             result.put("message", "下单成功");
             result.put("orderId", order.getId());
@@ -266,7 +286,8 @@ public class UserOrderController {
             return "redirect:/user/orders";
         }
 
-        if (!"completed".equals(order.getStatus())) {
+        String status = order.getStatus();
+        if (!"completed".equals(status) && !"reviewed".equals(status)) {
             model.addAttribute("error", "只有已完成的订单才能投诉");
             return "redirect:/user/orders";
         }
@@ -295,7 +316,12 @@ public class UserOrderController {
         }
 
         Order order = orderService.findById(orderId);
-        if (order == null || !order.getUserId().equals(user.getId()) || !"completed".equals(order.getStatus())) {
+        if (order == null || !order.getUserId().equals(user.getId())) {
+            return "redirect:/user/orders";
+        }
+
+        String status = order.getStatus();
+        if (!"completed".equals(status) && !"reviewed".equals(status)) {
             return "redirect:/user/orders";
         }
 

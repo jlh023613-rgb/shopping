@@ -3,56 +3,71 @@
 <head th:replace="~{layout :: head}"></head>
 <body class="bg-light">
 <style>
-    body { font-family: 'Noto Sans SC', sans-serif; background-color: #f3f4f6; }
-    .refund-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1rem; }
-    .product-img { width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #f8f9fa; }
-    .btn-submit { background: linear-gradient(to right, #667eea, #764ba2); color: white; border: none; padding: 12px 40px; border-radius: 25px; font-weight: 600; }
-    .btn-submit:hover { color: white; opacity: 0.9; }
+    :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+    body { background-color: var(--bg); }
+    .page-title { font-size: 16px; font-weight: 600; color: var(--text-dark); padding-left: 10px; border-left: 3px solid var(--primary); margin-bottom: 16px; }
+    .section-card { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+    .section-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .product-img { width: 70px; height: 70px; object-fit: contain; border: 1px solid var(--border); border-radius: 2px; background: #fff; }
+    .product-name { font-size: 14px; color: var(--text-dark); font-weight: 500; }
+    .order-no { font-size: 12px; color: var(--text-muted); }
+    .product-price { font-size: 16px; color: var(--primary); font-weight: 700; }
+    .product-qty { font-size: 12px; color: var(--text-muted); margin-left: 6px; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+    .form-control { border-radius: 2px; border: 1px solid var(--border); font-size: 13px; }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 0.15rem rgba(255,68,0,0.15); }
+    .btn-submit { background: var(--primary); color: white; border: none; padding: 8px 24px; border-radius: 2px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.15s; }
+    .btn-submit:hover { background: var(--primary-dark); color: white; }
+    .btn-back { background: white; color: var(--text-secondary); border: 1px solid var(--border); padding: 8px 16px; border-radius: 2px; font-size: 13px; cursor: pointer; text-decoration: none; }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); }
+    .info-tip { background: #E3F2FD; border: 1px solid #BBDEFB; border-radius: 4px; padding: 8px 12px; font-size: 12px; color: #1565C0; margin-bottom: 16px; }
+    .refund-note { background: #fafafa; border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
+    .refund-note h6 { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+    .refund-note ul { font-size: 12px; color: var(--text-secondary); padding-left: 16px; margin: 0; }
+    .refund-note li { margin-bottom: 4px; }
 </style>
 
 <nav th:replace="~{layout :: nav}"></nav>
 
-<main class="container py-4">
-    <h4 class="fw-bold mb-4"><i class="bi bi-arrow-return-left me-2"></i>申请退款</h4>
-
+<main class="container py-3">
+    <div class="page-title">申请退款</div>
     <div class="row">
         <div class="col-lg-8">
-            <div class="refund-card">
-                <h6 class="fw-bold mb-3">订单信息</h6>
+            <div class="section-card">
+                <div class="section-title">订单信息</div>
                 <div class="d-flex align-items-center">
                     <img th:if="${order.productImage != null}" th:src="${order.productImage}" class="product-img">
-                    <div class="ms-3 flex-grow-1">
-                        <h6 th:text="${order.productName}">商品名称</h6>
-                        <div class="text-secondary small">订单号：<span th:text="${order.orderNo}"></span></div>
-                        <div class="mt-2">
-                            <span class="text-danger fw-bold" th:text="'¥' + ${order.totalPrice}"></span>
-                            <span class="text-secondary ms-2" th:text="'x' + ${order.quantity}"></span>
+                    <div style="margin-left: 12px; flex-grow: 1;">
+                        <div class="product-name" th:text="${order.productName}">商品名称</div>
+                        <div class="order-no">订单号：<span th:text="${order.orderNo}"></span></div>
+                        <div style="margin-top: 4px;">
+                            <span class="product-price" th:text="'¥' + ${order.totalPrice}"></span>
+                            <span class="product-qty" th:text="'x' + ${order.quantity}"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="refund-card">
-                <h6 class="fw-bold mb-3">退款原因</h6>
+            <div class="section-card">
+                <div class="section-title">退款原因</div>
                 <form th:action="@{/user/refund/submit}" method="post">
                     <input type="hidden" name="orderId" th:value="${order.id}">
                     <div class="mb-3">
                         <textarea name="reason" class="form-control" rows="4" placeholder="请输入退款原因（必填）" required></textarea>
                     </div>
-                    <div class="alert alert-info small">
-                        <i class="bi bi-info-circle me-1"></i>
+                    <div class="info-tip">
                         退款申请提交后，商家会在48小时内处理。若商家超时未处理，管理员将介入处理。
                     </div>
-                    <button type="submit" class="btn btn-submit">提交退款申请</button>
-                    <a href="/user/orders" class="btn btn-outline-secondary ms-2">返回订单列表</a>
+                    <button type="submit" class="btn-submit">提交退款申请</button>
+                    <a href="/user/orders" class="btn-back" style="display: inline-block; margin-left: 8px;">返回订单列表</a>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="refund-card">
-                <h6 class="fw-bold mb-3">退款须知</h6>
-                <ul class="text-secondary small">
+            <div class="refund-note">
+                <h6>退款须知</h6>
+                <ul>
                     <li>订单完成后7天内可申请退款</li>
                     <li>退款金额将原路返回</li>
                     <li>商家超时未处理，管理员将介入</li>
@@ -62,6 +77,7 @@
     </div>
 </main>
 
+<footer th:replace="~{layout :: footer}"></footer>
 <script th:replace="~{layout :: scripts}"></script>
 </body>
 </html>

@@ -5,82 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>商家后台</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { background: #f3f4f6; font-family: 'Noto Sans SC', sans-serif; }
-        .sidebar { background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding-top: 1rem; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; border-radius: 8px; margin: 4px 12px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: rgba(255,255,255,0.2); color: white; }
-        .sidebar .nav-link i { margin-right: 10px; }
-        .stat-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-        .stat-card .stat-number { font-size: 2rem; font-weight: 700; }
-        .content-area { padding: 1.5rem; }
+        :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+        body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 13px; color: var(--text-dark); margin: 0; }
+        .sidebar { background: white; border-right: 1px solid var(--border); min-height: 100vh; padding-top: 0; }
+        .sidebar-header { background: var(--primary); color: white; padding: 16px 16px 12px; }
+        .sidebar-header h5 { margin: 0; font-size: 15px; font-weight: 700; }
+        .sidebar-header small { color: rgba(255,255,255,0.8); font-size: 11px; }
+        .sidebar .nav-link { color: var(--text-dark); padding: 10px 16px; border-radius: 0; margin: 0; font-size: 13px; border-left: 3px solid transparent; }
+        .sidebar .nav-link:hover { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); }
+        .sidebar .nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 600; border-left-color: var(--primary); }
+        .content-area { padding: 20px; }
+        .page-title { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .stat-card { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; }
+        .stat-card .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .stat-card .stat-number { font-size: 22px; font-weight: 700; }
+        .stat-card .stat-number.text-primary { color: var(--primary) !important; }
+        .data-card { background: white; border: 1px solid var(--border); border-radius: 4px; }
+        .data-card .card-header { background: white; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 13px; padding: 10px 16px; }
+        .data-card .card-body { padding: 0; }
+        .table { margin-bottom: 0; font-size: 12px; }
+        .table th { font-weight: 600; color: var(--text-secondary); border-bottom-width: 1px; padding: 8px 12px; background: #fafafa; }
+        .table td { padding: 8px 12px; vertical-align: middle; }
+        .badge { font-size: 11px; font-weight: 500; border-radius: 2px; padding: 3px 8px; }
+        .badge-pending { background: #FFF3E0; color: #E65100; }
+        .badge-shipping { background: #E3F2FD; color: #1565C0; }
+        .badge-delivered { background: #E8F5E9; color: #2E7D32; }
+        .badge-completed { background: #E8F5E9; color: #1B5E20; }
+        .badge-cancelled { background: #F5F5F5; color: #757575; }
+        .badge-refunded { background: #FCE4EC; color: #C62828; }
+        .review-item { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+        .review-item:last-child { border-bottom: none; }
+        .review-username { font-weight: 600; font-size: 12px; }
+        .review-stars { color: var(--primary); font-size: 12px; }
+        .review-content { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
+        .review-date { color: var(--text-muted); font-size: 11px; }
     </style>
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2 sidebar">
-            <div class="text-center text-white mb-4">
-                <i class="bi bi-shop" style="font-size: 2rem;"></i>
-                <h5 class="mt-2" th:text="${merchant.shopName}">店铺名称</h5>
-                <small class="text-white-50" th:text="${merchant.category}">分类</small>
+            <div class="sidebar-header">
+                <h5 th:text="${merchant.shopName}">店铺名称</h5>
+                <small th:text="${merchant.category}">分类</small>
             </div>
             <nav class="nav flex-column">
-                <a class="nav-link active" href="/merchant/dashboard"><i class="bi bi-speedometer2"></i>概览</a>
-                <a class="nav-link" href="/merchant/products"><i class="bi bi-box-seam"></i>商品管理</a>
-                <a class="nav-link" href="/merchant/orders"><i class="bi bi-receipt"></i>订单管理</a>
-                <a class="nav-link" href="/merchant/refunds"><i class="bi bi-arrow-return-left"></i>退款管理</a>
-                <a class="nav-link" href="/merchant/reviews"><i class="bi bi-chat-dots"></i>评价管理</a>
-                <a class="nav-link" href="/merchant/logout"><i class="bi bi-box-arrow-left"></i>退出</a>
+                <a class="nav-link active" href="/merchant/dashboard">概览</a>
+                <a class="nav-link" href="/merchant/products">商品管理</a>
+                <a class="nav-link" href="/merchant/orders">订单管理</a>
+                <a class="nav-link" href="/merchant/refunds">退款管理</a>
+                <a class="nav-link" href="/merchant/reviews">评价管理</a>
+                <a class="nav-link" href="/merchant/logout">退出登录</a>
             </nav>
         </div>
         <div class="col-md-10 content-area">
-            <h4 class="mb-4 fw-bold">店铺概览</h4>
+            <div class="page-title">店铺概览</div>
             <div class="row g-3 mb-4">
                 <div class="col-md-2">
                     <div class="stat-card">
-                        <div class="text-secondary small">商品总数</div>
+                        <div class="stat-label">商品总数</div>
                         <div class="stat-number text-primary" th:text="${totalProducts}">0</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card">
-                        <div class="text-secondary small">订单总数</div>
-                        <div class="stat-number text-success" th:text="${totalOrders}">0</div>
+                        <div class="stat-label">订单总数</div>
+                        <div class="stat-number" style="color:#2E7D32" th:text="${totalOrders}">0</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card">
-                        <div class="text-secondary small">待接单</div>
-                        <div class="stat-number text-warning" th:text="${pendingOrders}">0</div>
+                        <div class="stat-label">待接单</div>
+                        <div class="stat-number" style="color:#E65100" th:text="${pendingOrders}">0</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card">
-                        <div class="text-secondary small">运输中</div>
-                        <div class="stat-number text-info" th:text="${shippingOrders}">0</div>
+                        <div class="stat-label">运输中</div>
+                        <div class="stat-number" style="color:#1565C0" th:text="${shippingOrders}">0</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card">
-                        <div class="text-secondary small">已送达</div>
-                        <div class="stat-number text-primary" th:text="${deliveredOrders}">0</div>
+                        <div class="stat-label">已送达</div>
+                        <div class="stat-number" style="color:#2E7D32" th:text="${deliveredOrders}">0</div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="stat-card">
-                        <div class="text-secondary small">待处理退款</div>
-                        <div class="stat-number text-danger" th:text="${pendingRefunds}">0</div>
+                        <div class="stat-label">待处理退款</div>
+                        <div class="stat-number" style="color:#C62828" th:text="${pendingRefunds}">0</div>
                     </div>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="data-card mb-4">
+                <div class="card-header">最近订单</div>
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3">最近订单</h6>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table">
                             <thead><tr><th>订单号</th><th>商品</th><th>金额</th><th>状态</th><th>时间</th></tr></thead>
                             <tbody>
                             <tr th:each="order : ${orders}">
@@ -88,12 +112,12 @@
                                 <td th:text="${order.productName}"></td>
                                 <td th:text="'¥' + ${order.totalPrice}"></td>
                                 <td>
-                                    <span class="badge bg-warning" th:if="${order.status == 'pending'}">等待接单</span>
-                                    <span class="badge bg-info" th:if="${order.status == 'shipping'}">运输中</span>
-                                    <span class="badge bg-primary" th:if="${order.status == 'delivered'}">已送达</span>
-                                    <span class="badge bg-success" th:if="${order.status == 'completed'}">已完成</span>
-                                    <span class="badge bg-secondary" th:if="${order.status == 'cancelled'}">已取消</span>
-                                    <span class="badge bg-danger" th:if="${order.status == 'refunded'}">已退款</span>
+                                    <span class="badge badge-pending" th:if="${order.status == 'pending'}">等待接单</span>
+                                    <span class="badge badge-shipping" th:if="${order.status == 'shipping'}">运输中</span>
+                                    <span class="badge badge-delivered" th:if="${order.status == 'delivered'}">已送达</span>
+                                    <span class="badge badge-completed" th:if="${order.status == 'completed'}">已完成</span>
+                                    <span class="badge badge-cancelled" th:if="${order.status == 'cancelled'}">已取消</span>
+                                    <span class="badge badge-refunded" th:if="${order.status == 'refunded'}">已退款</span>
                                 </td>
                                 <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                             </tr>
@@ -103,19 +127,19 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm" th:if="${reviews != null and !reviews.isEmpty()}">
+            <div class="data-card" th:if="${reviews != null and !reviews.isEmpty()}">
+                <div class="card-header">最新评价</div>
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3">最新评价</h6>
-                    <div th:each="review : ${reviews}">
-                        <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-2">
+                    <div th:each="review : ${reviews}" class="review-item">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <strong th:text="${review.username}"></strong>
-                                <span class="text-warning ms-2">
+                                <span class="review-username" th:text="${review.username}"></span>
+                                <span class="review-stars ms-2">
                                     <span th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
                                 </span>
-                                <p class="mb-0 text-secondary small" th:text="${review.content}"></p>
+                                <p class="review-content mb-0" th:text="${review.content}"></p>
                             </div>
-                            <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'MM-dd')}"></small>
+                            <span class="review-date" th:text="${#temporals.format(review.createdAt, 'MM-dd')}"></span>
                         </div>
                     </div>
                 </div>

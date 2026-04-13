@@ -117,6 +117,7 @@ public class CheckoutController {
 
             String[] idArray = cartIds.split(",");
             List<Long> processedIds = new ArrayList<>();
+            List<String> outOfStockItems = new ArrayList<>();
             int orderCount = 0;
 
             for (String idStr : idArray) {
@@ -127,6 +128,11 @@ public class CheckoutController {
                         if (item.getId().equals(cartId)) {
                             Product product = productMapper.findById(item.getProductId());
                             if (product == null) continue;
+
+                            if (product.getStock() == null || product.getStock() < item.getQuantity()) {
+                                outOfStockItems.add(product.getName());
+                                continue;
+                            }
 
                             if (product.getMerchantId() != null) {
                                 Merchant merchant = merchantMapper.findById(product.getMerchantId());
@@ -155,6 +161,13 @@ public class CheckoutController {
                             order.setReceiverAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
 
                             orderMapper.insert(order);
+
+                            int rows = productMapper.decreaseStock(product.getId(), item.getQuantity());
+                            if (rows == 0) {
+                                outOfStockItems.add(product.getName());
+                                continue;
+                            }
+
                             processedIds.add(cartId);
                             orderCount++;
                             break;
@@ -169,8 +182,17 @@ public class CheckoutController {
                 cartMapper.delete(cartId, user.getId());
             }
 
-            result.put("success", true);
-            result.put("message", "下单成功，共创建 " + orderCount + " 个订单");
+            if (orderCount > 0) {
+                String message = "下单成功，共创建 " + orderCount + " 个订单";
+                if (!outOfStockItems.isEmpty()) {
+                    message += "，以下商品库存不足未下单: " + String.join("、", outOfStockItems);
+                }
+                result.put("success", true);
+                result.put("message", message);
+            } else {
+                result.put("success", false);
+                result.put("message", "下单失败，商品库存不足: " + String.join("、", outOfStockItems));
+            }
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "下单失败: " + e.getMessage());

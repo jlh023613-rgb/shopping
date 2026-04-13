@@ -1,38 +1,95 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head}"></head>
-<body class="bg-light">
-<nav th:replace="~{layout :: nav}"></nav>
-<main class="container py-4">
-    <h2 class="mb-4">订单列表</h2>
-    <p class="text-muted">以下为全部订单，用于演示“后台管理查看订单”环节。</p>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <table class="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th>订单ID</th>
-                    <th>总价（元）</th>
-                    <th>状态</th>
-                    <th>下单时间</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="o : ${orders}">
-                    <td th:text="${o.id}">1</td>
-                    <td th:text="${o.totalPrice}">0</td>
-                    <td th:text="${o.status}">待付款</td>
-                    <td th:text="${o.createTime != null ? #temporals.format(o.createTime, 'yyyy-MM-dd HH:mm') : '-'}">时间</td>
-                </tr>
-                </tbody>
-            </table>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>订单列表</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+        body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 13px; color: var(--text-dark); margin: 0; }
+        .sidebar { background: white; border-right: 1px solid var(--border); min-height: 100vh; padding-top: 0; }
+        .sidebar-header { background: #333; color: white; padding: 16px 16px 12px; }
+        .sidebar-header h5 { margin: 0; font-size: 15px; font-weight: 700; }
+        .sidebar .nav-link { color: var(--text-dark); padding: 10px 16px; border-radius: 0; margin: 0; font-size: 13px; border-left: 3px solid transparent; }
+        .sidebar .nav-link:hover { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); }
+        .sidebar .nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 600; border-left-color: var(--primary); }
+        .content-area { padding: 20px; }
+        .page-title { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .data-card { background: white; border: 1px solid var(--border); border-radius: 4px; }
+        .data-card .card-body { padding: 0; }
+        .table { margin-bottom: 0; font-size: 12px; }
+        .table th { font-weight: 600; color: var(--text-secondary); border-bottom-width: 1px; padding: 8px 12px; background: #fafafa; }
+        .table td { padding: 8px 12px; vertical-align: middle; }
+        .badge { font-size: 11px; font-weight: 500; border-radius: 2px; padding: 3px 8px; }
+        .badge-pending { background: #FFF3E0; color: #E65100; }
+        .badge-paid { background: #E3F2FD; color: #1565C0; }
+        .badge-shipping { background: #E3F2FD; color: #1565C0; }
+        .badge-delivered { background: #E8F5E9; color: #2E7D32; }
+        .badge-completed { background: #E8F5E9; color: #1B5E20; }
+        .badge-cancelled { background: #F5F5F5; color: #757575; }
+        .badge-refunded { background: #FFEBEE; color: #C62828; }
+        .btn-back { background: white; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 2px; font-size: 12px; padding: 6px 14px; }
+        .btn-back:hover { background: #fafafa; color: var(--text-dark); }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <div class="sidebar-header">
+                <h5>管理员后台</h5>
+            </div>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="/admin/dashboard">概览</a>
+                <a class="nav-link" href="/admin/merchants">商家管理</a>
+                <a class="nav-link" href="/admin/complaints">投诉管理</a>
+                <a class="nav-link" href="/admin/refunds">退款管理</a>
+                <a class="nav-link active" href="/admin/order-list">订单列表</a>
+                <a class="nav-link" href="/admin/logout">退出登录</a>
+            </nav>
+        </div>
+        <div class="col-md-10 content-area">
+            <div class="page-title">订单列表</div>
+            <div class="data-card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>订单ID</th>
+                                <th>总价（元）</th>
+                                <th>状态</th>
+                                <th>下单时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="o : ${orders}">
+                                <td th:text="${o.id}">1</td>
+                                <td style="color:var(--primary);font-weight:600" th:text="${o.totalPrice}">0</td>
+                                <td>
+                                    <span class="badge badge-pending" th:if="${o.status == 'pending'}">待付款</span>
+                                    <span class="badge badge-paid" th:if="${o.status == 'paid'}">已付款</span>
+                                    <span class="badge badge-shipping" th:if="${o.status == 'shipping'}">运输中</span>
+                                    <span class="badge badge-delivered" th:if="${o.status == 'delivered'}">已送达</span>
+                                    <span class="badge badge-completed" th:if="${o.status == 'completed'}">已完成</span>
+                                    <span class="badge badge-cancelled" th:if="${o.status == 'cancelled'}">已取消</span>
+                                    <span class="badge badge-refunded" th:if="${o.status == 'refunded'}">已退款</span>
+                                    <span th:if="${o.status != 'pending' and o.status != 'paid' and o.status != 'shipping' and o.status != 'delivered' and o.status != 'completed' and o.status != 'cancelled' and o.status != 'refunded'}" th:text="${o.status}"></span>
+                                </td>
+                                <td style="font-size:11px;color:var(--text-muted)" th:text="${o.createTime != null ? #temporals.format(o.createTime, 'yyyy-MM-dd HH:mm') : '-'}">时间</td>
+                            </tr>
+                            <tr th:if="${orders == null or orders.isEmpty()}">
+                                <td colspan="4" class="text-center text-secondary py-4">暂无订单</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="mt-3">
-        <a href="/" class="btn btn-outline-primary">返回首页</a>
-        <a href="/order/list" class="btn btn-outline-secondary ms-2">我的订单</a>
-    </div>
-</main>
-<script th:replace="~{layout :: scripts}"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

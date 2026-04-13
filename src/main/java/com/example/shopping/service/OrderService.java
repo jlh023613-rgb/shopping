@@ -80,7 +80,8 @@ public class OrderService {
         order.setHasRefund(false);
 
         try {
-            if ("completed".equals(order.getStatus())) {
+            String status = order.getStatus();
+            if ("completed".equals(status) || "reviewed".equals(status)) {
                 Complaint complaint = complaintMapper.findByOrderId(order.getId());
                 order.setHasComplaint(complaint != null);
                 order.setCanComplaint(complaint == null);
@@ -140,7 +141,12 @@ public class OrderService {
     @Transactional
     public Refund applyRefund(Long orderId, Long userId, String reason) {
         Order order = orderMapper.findById(orderId);
-        if (order == null || !order.getUserId().equals(userId) || !"completed".equals(order.getStatus())) {
+        if (order == null || !order.getUserId().equals(userId)) {
+            return null;
+        }
+
+        String status = order.getStatus();
+        if (!"completed".equals(status) && !"reviewed".equals(status)) {
             return null;
         }
 

@@ -6,125 +6,92 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f5f5f5;
-        }
-        .user-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            padding: 2rem;
-            color: white;
-            margin-bottom: 1.5rem;
-        }
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: #764ba2;
-        }
-        .info-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .info-label {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .info-value {
-            font-weight: 500;
-        }
-        .address-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid #eee;
-            transition: all 0.2s;
-        }
-        .address-card:hover {
-            border-color: #764ba2;
-        }
-        .address-card.default {
-            border-color: #764ba2;
-            background: linear-gradient(to right, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-        }
-        .modal-content {
-            border-radius: 15px;
-        }
-        .phone-display {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .phone-display .btn-eye {
-            padding: 0;
-            border: none;
-            background: transparent;
-            color: inherit;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-        .phone-display .btn-eye:hover {
-            opacity: 1;
-        }
-        .info-value .phone-display .btn-eye {
-            color: #764ba2;
-        }
-        .user-card .phone-display .btn-eye {
-            color: white;
-        }
+        :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
+        body { background-color: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 14px; color: var(--text-dark); }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { color: var(--primary-dark); }
+        .top-nav { background: white; border-bottom: 2px solid var(--primary); padding: 0; }
+        .top-nav .container { height: 50px; display: flex; align-items: center; justify-content: space-between; }
+        .top-nav .logo { color: var(--primary); font-weight: 700; font-size: 16px; }
+        .top-nav .nav-links { display: flex; align-items: center; gap: 16px; font-size: 12px; }
+        .top-nav .nav-links a { color: var(--text-secondary); }
+        .top-nav .nav-links a:hover { color: var(--primary); }
+        .user-banner { background: var(--primary); padding: 24px 0; color: white; }
+        .user-avatar { width: 56px; height: 56px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--primary); }
+        .user-name { font-size: 18px; font-weight: 600; }
+        .btn-delete-account { background: transparent; border: 1px solid rgba(255,255,255,0.5); color: rgba(255,255,255,0.8); padding: 3px 12px; border-radius: 2px; font-size: 12px; cursor: pointer; }
+        .btn-delete-account:hover { background: rgba(255,255,255,0.15); color: white; border-color: white; }
+        .section-card { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+        .section-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .info-label { color: var(--text-muted); font-size: 12px; }
+        .info-value { font-weight: 500; font-size: 13px; }
+        .address-card { border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; margin-bottom: 8px; transition: border-color 0.15s; }
+        .address-card:hover { border-color: var(--primary); }
+        .address-card.default { border-color: var(--primary); background: var(--primary-light); }
+        .addr-name { font-weight: 600; font-size: 13px; }
+        .addr-phone { color: var(--text-muted); font-size: 12px; margin-left: 8px; }
+        .addr-default { background: var(--primary); color: white; font-size: 10px; padding: 1px 6px; border-radius: 2px; margin-left: 6px; }
+        .addr-detail { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+        .btn-sm-primary { background: var(--primary); color: white; border: none; padding: 3px 10px; border-radius: 2px; font-size: 12px; cursor: pointer; }
+        .btn-sm-primary:hover { background: var(--primary-dark); color: white; }
+        .btn-sm-outline { background: white; color: var(--text-secondary); border: 1px solid var(--border); padding: 3px 10px; border-radius: 2px; font-size: 12px; cursor: pointer; }
+        .btn-sm-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-sm-danger { background: white; color: #d32f2f; border: 1px solid #d32f2f; padding: 3px 10px; border-radius: 2px; font-size: 12px; cursor: pointer; }
+        .btn-sm-danger:hover { background: #d32f2f; color: white; }
+        .phone-display { display: inline-flex; align-items: center; gap: 6px; }
+        .btn-eye { padding: 0; border: none; background: transparent; color: var(--primary); cursor: pointer; font-size: 12px; }
+        .btn-eye:hover { opacity: 0.7; }
+        .modal-content { border-radius: 4px; border: 1px solid var(--border); }
+        .modal-header { border-bottom: 1px solid var(--border); padding: 12px 16px; }
+        .modal-footer { border-top: 1px solid var(--border); padding: 10px 16px; }
+        .modal-body { padding: 16px; }
+        .btn-modal-primary { background: var(--primary); color: white; border: none; padding: 6px 20px; border-radius: 2px; font-size: 13px; cursor: pointer; }
+        .btn-modal-primary:hover { background: var(--primary-dark); color: white; }
+        .btn-modal-danger { background: #d32f2f; color: white; border: none; padding: 6px 20px; border-radius: 2px; font-size: 13px; cursor: pointer; }
+        .btn-modal-danger:hover { background: #b71c1c; color: white; }
+        .btn-modal-secondary { background: white; color: var(--text-secondary); border: 1px solid var(--border); padding: 6px 20px; border-radius: 2px; font-size: 13px; cursor: pointer; }
+        .form-control { border-radius: 2px; border: 1px solid var(--border); font-size: 13px; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 0.15rem rgba(255,68,0,0.15); }
+        .form-select { border-radius: 2px; border: 1px solid var(--border); font-size: 13px; }
+        .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 0.15rem rgba(255,68,0,0.15); }
+        .form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
+        .alert { border-radius: 2px; font-size: 13px; }
+        footer { background: #333; color: #aaa; text-align: center; padding: 16px 0; margin-top: 40px; font-size: 12px; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<nav class="top-nav">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/" style="color: #764ba2;">
-            <i class="bi bi-shop me-2"></i>网上商城
-        </a>
-        <div class="d-flex align-items-center">
-            <a href="/cart" class="btn btn-outline-success btn-sm me-2">
-                <i class="bi bi-cart3 me-1"></i>购物车
-            </a>
-            <a href="/user/center" class="btn btn-outline-primary btn-sm me-2">
-                <i class="bi bi-person-circle me-1"></i>用户中心
-            </a>
+        <a href="/" class="logo">网上商城</a>
+        <div class="nav-links">
+            <a href="/cart">购物车</a>
+            <a href="/user/center">用户中心</a>
             <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-link btn-sm text-decoration-none">退出</button>
+                <button type="submit" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:12px;">退出</button>
             </form>
         </div>
     </div>
 </nav>
 
-<div class="container py-4">
-    <div class="user-card">
+<div class="user-banner">
+    <div class="container">
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
                 <div class="user-avatar me-3">
                     <i class="bi bi-person-fill"></i>
                 </div>
-                <div>
-                    <h4 class="mb-1" th:text="${user.username}">用户名</h4>
-                </div>
+                <div class="user-name" th:text="${user.username}">用户名</div>
             </div>
-            <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                <i class="bi bi-person-x me-1"></i>注销账户
-            </button>
+            <button class="btn-delete-account" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">注销账户</button>
         </div>
     </div>
+</div>
 
+<div class="container py-3">
     <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="info-card">
-                <h5 class="mb-3"><i class="bi bi-person-vcard me-2"></i>账户信息</h5>
+        <div class="col-md-6 mb-3">
+            <div class="section-card">
+                <div class="section-title">账户信息</div>
                 <div class="row">
                     <div class="col-6 mb-3">
                         <div class="info-label">用户名</div>
@@ -153,104 +120,105 @@
             </div>
         </div>
 
-        <div class="col-md-6 mb-4">
-            <div class="info-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>收货地址</h5>
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
-                        <i class="bi bi-plus-lg me-1"></i>添加地址
-                    </button>
+        <div class="col-md-6 mb-3">
+            <div class="section-card">
+                <div class="section-title">
+                    收货地址
+                    <button class="btn-sm-primary" data-bs-toggle="modal" data-bs-target="#addressModal">添加地址</button>
                 </div>
                 
                 <div th:if="${addresses != null and !addresses.isEmpty()}">
                     <div th:each="addr : ${addresses}" class="address-card" th:classappend="${addr.isDefault} ? 'default' : ''">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="fw-bold">
-                                    <span th:text="${addr.receiverName}">姓名</span>
-                                    <span class="text-muted ms-2" th:text="${addr.receiverPhone}">电话</span>
-                                    <span th:if="${addr.isDefault}" class="badge bg-primary ms-2">默认</span>
+                                <div>
+                                    <span class="addr-name" th:text="${addr.receiverName}">姓名</span>
+                                    <span class="addr-phone" th:text="${addr.receiverPhone}">电话</span>
+                                    <span th:if="${addr.isDefault}" class="addr-default">默认</span>
                                 </div>
-                                <div class="text-muted small mt-1">
+                                <div class="addr-detail">
                                     <span th:text="${addr.province}">省</span>
                                     <span th:text="${addr.city}">市</span>
                                     <span th:text="${addr.district}">区</span>
                                     <span th:text="${addr.detailAddress}">详细地址</span>
                                 </div>
                             </div>
-                            <div class="btn-group btn-group-sm">
+                            <div style="display: flex; gap: 6px;">
                                 <form th:if="${!addr.isDefault}" th:action="@{/user/address/default/{id}(id=${addr.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-outline-primary btn-sm">设为默认</button>
+                                    <button type="submit" class="btn-sm-outline">设为默认</button>
                                 </form>
                                 <form th:action="@{/user/address/delete/{id}(id=${addr.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('确定删除该地址吗？')">删除</button>
+                                    <button type="submit" class="btn-sm-danger" onclick="return confirm('确定删除该地址吗？')">删除</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div th:if="${addresses == null or addresses.isEmpty()}" class="text-center py-4 text-muted">
-                    <i class="bi bi-geo-alt fs-1"></i>
-                    <p class="mt-2">暂无收货地址</p>
+                <div th:if="${addresses == null or addresses.isEmpty()}" class="text-center py-4" style="color: var(--text-muted);">
+                    <p>暂无收货地址</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<footer>
+    <div class="container">&copy; 2024 网上商城 版权所有</div>
+</footer>
+
 <div class="modal fade" id="addressModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">添加收货地址</h5>
+                <h6 class="modal-title" style="font-size: 14px; font-weight: 600;">添加收货地址</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form th:action="@{/user/address/add}" method="post" onsubmit="return validateAddressForm()">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-6 mb-3">
-                            <label class="form-label">收货人</label>
+                            <label class="form-label" style="font-size: 12px;">收货人</label>
                             <input type="text" name="receiverName" id="receiverName" class="form-control" required>
                         </div>
                         <div class="col-6 mb-3">
-                            <label class="form-label">手机号</label>
+                            <label class="form-label" style="font-size: 12px;">手机号</label>
                             <input type="text" name="receiverPhone" id="receiverPhone" class="form-control" required>
                             <div class="text-danger small" id="phoneError"></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 mb-3">
-                            <label class="form-label">省份</label>
+                            <label class="form-label" style="font-size: 12px;">省份</label>
                             <select name="province" id="province" class="form-select" required onchange="loadCities()">
                                 <option value="">请选择</option>
                             </select>
                         </div>
                         <div class="col-4 mb-3">
-                            <label class="form-label">城市</label>
+                            <label class="form-label" style="font-size: 12px;">城市</label>
                             <select name="city" id="city" class="form-select" required onchange="loadDistricts()">
                                 <option value="">请选择</option>
                             </select>
                         </div>
                         <div class="col-4 mb-3">
-                            <label class="form-label">区/县</label>
+                            <label class="form-label" style="font-size: 12px;">区/县</label>
                             <select name="district" id="district" class="form-select" required>
                                 <option value="">请选择</option>
                             </select>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">详细地址</label>
+                        <label class="form-label" style="font-size: 12px;">详细地址</label>
                         <textarea name="detailAddress" class="form-control" rows="2" required></textarea>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" name="isDefault" value="true" class="form-check-input" id="isDefault">
-                        <label class="form-check-label" for="isDefault">设为默认地址</label>
+                        <label class="form-check-label" for="isDefault" style="font-size: 13px;">设为默认地址</label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn-modal-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn-modal-primary">保存</button>
                 </div>
             </form>
         </div>
@@ -260,29 +228,29 @@
 <div class="modal fade" id="deleteAccountModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>注销账户</h5>
+            <div class="modal-header" style="background: #d32f2f; color: white;">
+                <h6 class="modal-title" style="font-size: 14px; font-weight: 600;">注销账户</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form th:action="@{/user/delete}" method="post" onsubmit="return validateDeleteForm()">
                 <div class="modal-body">
-                    <div class="alert alert-warning">
-                        <i class="bi bi-info-circle me-2"></i>注销后您的所有数据将被永久删除，此操作不可恢复！
+                    <div class="alert alert-warning" style="font-size: 12px;">
+                        注销后您的所有数据将被永久删除，此操作不可恢复！
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">请输入手机号确认</label>
+                        <label class="form-label" style="font-size: 12px;">请输入手机号确认</label>
                         <input type="text" name="confirmPhone" id="confirmPhone" class="form-control" required>
                         <div class="text-danger small" id="confirmPhoneError"></div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">请输入密码确认</label>
+                        <label class="form-label" style="font-size: 12px;">请输入密码确认</label>
                         <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required>
                         <div class="text-danger small" id="confirmPasswordError"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-danger">确认注销</button>
+                    <button type="button" class="btn-modal-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn-modal-danger">确认注销</button>
                 </div>
             </form>
         </div>
@@ -293,19 +261,19 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-eye me-2"></i>查看完整手机号</h5>
+                <h6 class="modal-title" style="font-size: 14px; font-weight: 600;">查看完整手机号</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">请输入密码验证身份</label>
+                    <label class="form-label" style="font-size: 12px;">请输入密码验证身份</label>
                     <input type="password" id="verifyPassword" class="form-control" placeholder="请输入密码">
                     <div class="text-danger small" id="verifyPasswordError"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="verifyAndShowPhone()">确认</button>
+                <button type="button" class="btn-modal-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn-modal-primary" onclick="verifyAndShowPhone()">确认</button>
             </div>
         </div>
     </div>
@@ -331,38 +299,19 @@ function loadCities() {
     var province = document.getElementById('province').value;
     var citySelect = document.getElementById('city');
     var districtSelect = document.getElementById('district');
-    
     citySelect.innerHTML = '<option value="">请选择</option>';
     districtSelect.innerHTML = '<option value="">请选择</option>';
-    
-    if (!province) {
-        return;
-    }
-    
-    if (typeof regionData === 'undefined') {
-        console.error('regionData未加载，请检查region-data.js文件');
-        return;
-    }
-    
-    if (!regionData[province]) {
-        console.warn('未找到省份数据:', province);
-        return;
-    }
-    
+    if (!province) return;
+    if (typeof regionData === 'undefined') return;
+    if (!regionData[province]) return;
     var cities = regionData[province];
-    var cityCount = 0;
     for (var city in cities) {
         if (cities.hasOwnProperty(city)) {
             var option = document.createElement('option');
             option.value = city;
             option.text = city;
             citySelect.appendChild(option);
-            cityCount++;
         }
-    }
-    
-    if (cityCount === 0) {
-        console.warn('省份', province, '下没有城市数据');
     }
 }
 
@@ -370,23 +319,10 @@ function loadDistricts() {
     var province = document.getElementById('province').value;
     var city = document.getElementById('city').value;
     var districtSelect = document.getElementById('district');
-    
     districtSelect.innerHTML = '<option value="">请选择</option>';
-    
-    if (!province || !city) {
-        return;
-    }
-    
-    if (typeof regionData === 'undefined') {
-        console.error('regionData未加载，请检查region-data.js文件');
-        return;
-    }
-    
-    if (!regionData[province] || !regionData[province][city]) {
-        console.warn('未找到城市数据:', province, city);
-        return;
-    }
-    
+    if (!province || !city) return;
+    if (typeof regionData === 'undefined') return;
+    if (!regionData[province] || !regionData[province][city]) return;
     var districts = regionData[province][city];
     if (Array.isArray(districts)) {
         districts.forEach(function(district) {
@@ -398,18 +334,12 @@ function loadDistricts() {
     }
 }
 
-function validatePhone(phone) {
-    return /^1[3-9]\d{9}$/.test(phone);
-}
+function validatePhone(phone) { return /^1[3-9]\d{9}$/.test(phone); }
 
 function validateAddressForm() {
     var phone = document.getElementById('receiverPhone').value;
     var phoneError = document.getElementById('phoneError');
-    
-    if (!validatePhone(phone)) {
-        phoneError.textContent = '请输入正确的手机号';
-        return false;
-    }
+    if (!validatePhone(phone)) { phoneError.textContent = '请输入正确的手机号'; return false; }
     phoneError.textContent = '';
     return true;
 }
@@ -419,34 +349,17 @@ function validateDeleteForm() {
     var password = document.getElementById('confirmPassword').value;
     var phoneError = document.getElementById('confirmPhoneError');
     var passwordError = document.getElementById('confirmPasswordError');
-    
     var valid = true;
-    
-    if (!validatePhone(phone)) {
-        phoneError.textContent = '请输入正确的手机号';
-        valid = false;
-    } else if (phone !== userPhone) {
-        phoneError.textContent = '手机号与账户不匹配';
-        valid = false;
-    } else {
-        phoneError.textContent = '';
-    }
-    
-    if (!password) {
-        passwordError.textContent = '请输入密码';
-        valid = false;
-    } else {
-        passwordError.textContent = '';
-    }
-    
+    if (!validatePhone(phone)) { phoneError.textContent = '请输入正确的手机号'; valid = false; }
+    else if (phone !== userPhone) { phoneError.textContent = '手机号与账户不匹配'; valid = false; }
+    else { phoneError.textContent = ''; }
+    if (!password) { passwordError.textContent = '请输入密码'; valid = false; }
+    else { passwordError.textContent = ''; }
     return valid;
 }
 
 function showPhoneModal() {
-    if (phoneVerified) {
-        document.getElementById('infoPhone').textContent = userPhone;
-        return;
-    }
+    if (phoneVerified) { document.getElementById('infoPhone').textContent = userPhone; return; }
     document.getElementById('verifyPassword').value = '';
     document.getElementById('verifyPasswordError').textContent = '';
     var modal = new bootstrap.Modal(document.getElementById('showPhoneModal'));
@@ -456,17 +369,10 @@ function showPhoneModal() {
 function verifyAndShowPhone() {
     var password = document.getElementById('verifyPassword').value;
     var errorDiv = document.getElementById('verifyPasswordError');
-    
-    if (!password) {
-        errorDiv.textContent = '请输入密码';
-        return;
-    }
-    
+    if (!password) { errorDiv.textContent = '请输入密码'; return; }
     fetch('/user/verify-password', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'password=' + encodeURIComponent(password)
     })
     .then(response => response.json())
@@ -475,30 +381,14 @@ function verifyAndShowPhone() {
             phoneVerified = true;
             document.getElementById('infoPhone').textContent = userPhone;
             bootstrap.Modal.getInstance(document.getElementById('showPhoneModal')).hide();
-        } else {
-            errorDiv.textContent = data.message || '密码错误';
-        }
+        } else { errorDiv.textContent = data.message || '密码错误'; }
     })
-    .catch(error => {
-        errorDiv.textContent = '验证失败，请重试';
-    });
+    .catch(error => { errorDiv.textContent = '验证失败，请重试'; });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 确保region-data.js已加载
-    if (typeof regionData !== 'undefined') {
-        loadProvinces();
-    } else {
-        console.error('region-data.js未加载，请检查文件路径');
-        // 延迟重试
-        setTimeout(function() {
-            if (typeof regionData !== 'undefined') {
-                loadProvinces();
-            } else {
-                console.error('region-data.js加载失败');
-            }
-        }, 500);
-    }
+    if (typeof regionData !== 'undefined') { loadProvinces(); }
+    else { setTimeout(function() { if (typeof regionData !== 'undefined') loadProvinces(); }, 500); }
 });
 </script>
 </body>
