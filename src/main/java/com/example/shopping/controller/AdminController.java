@@ -42,16 +42,13 @@ public class AdminController {
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        HttpSession session,
-                        Model model) {
+                        HttpSession session) {
         Admin admin = adminMapper.findByUsername(username);
         if (admin == null) {
-            model.addAttribute("error", "管理员账号不存在");
-            return "admin/login";
+            return "redirect:/admin/login?error";
         }
         if (!passwordEncoder.matches(password, admin.getPassword())) {
-            model.addAttribute("error", "密码错误");
-            return "admin/login";
+            return "redirect:/admin/login?error";
         }
 
         session.setAttribute("admin", admin);
@@ -191,6 +188,19 @@ public class AdminController {
         model.addAttribute("complaints", complaints);
         model.addAttribute("currentStatus", status);
         return "admin/complaints";
+    }
+
+    @GetMapping("/order-list")
+    public String orderList(HttpSession session, Model model) {
+        Admin admin = (Admin) session.getAttribute("admin");
+        if (admin == null) {
+            return "redirect:/admin/login";
+        }
+
+        List<Order> orders = orderService.findAll();
+        model.addAttribute("admin", admin);
+        model.addAttribute("orders", orders);
+        return "admin/order-list";
     }
 
     @PostMapping("/complaint/handle/{id}")

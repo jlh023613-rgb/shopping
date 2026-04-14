@@ -28,7 +28,7 @@ public interface ProductMapper {
     
     void delete(Long id);
 
-    @Select("SELECT * FROM products WHERE status = 1 AND merchant_id IN (SELECT id FROM merchants WHERE status = 'approved')")
+    @Select("SELECT * FROM products WHERE status = 1 AND (merchant_id IS NULL OR merchant_id IN (SELECT id FROM shops))")
     List<Product> findActiveAll();
 
     int decreaseStock(@Param("productId") Long productId, @Param("quantity") Integer quantity);

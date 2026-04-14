@@ -33,23 +33,22 @@
 <div th:fragment="topbar" class="topbar" style="background: var(--primary-dark); height: 30px; line-height: 30px; font-size: 12px;">
     <div class="container d-flex justify-content-between align-items-center" style="height: 100%;">
         <span style="color: rgba(255,255,255,0.9);">欢迎来到网上商城 | 免费注册享优惠</span>
-        <span>
-            <a href="/merchant/login" style="color: rgba(255,255,255,0.7); font-size: 11px;">商家入口</a>
-            <span style="color: rgba(255,255,255,0.4); margin: 0 8px;">|</span>
-            <a href="/admin/login" style="color: rgba(255,255,255,0.7); font-size: 11px;">管理员入口</a>
+        <span style="display: flex; align-items: center;">
+            <a href="/merchant/login" class="topbar-btn">🏪 商家入口</a>
+            <a href="/admin/login" class="topbar-btn">🔧 管理员入口</a>
         </span>
     </div>
 </div>
 
 <nav th:fragment="nav" class="navbar navbar-expand-lg navbar-light bg-white sticky-top" style="border-bottom: 1px solid #ddd; padding: 0; top: 30px;">
-    <div class="container" style="height: 60px;">
+    <div class="container" style="height: 60px; display: flex; align-items: center;">
         <a class="navbar-brand" href="/" style="color: var(--primary); font-weight: 700; font-size: 1.4rem; padding: 0;">
             网上商城
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="padding: 4px 8px;">
             <span class="navbar-toggler-icon" style="width: 20px; height: 20px;"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav" style="display: flex; align-items: center;">
             <form class="d-flex mx-auto" action="/" method="get" style="width: 500px; max-width: 100%;">
                 <div class="input-group">
                     <input type="text" class="form-control" name="keyword" placeholder="搜索商品..." th:value="${keyword}" style="border-radius: 20px 0 0 20px; border: 2px solid var(--primary); border-right: none; padding: 8px 16px;">
@@ -60,8 +59,8 @@
             </form>
             <div class="d-flex align-items-center" style="font-size: 13px;">
                 <span th:if="${user == null}" class="d-flex align-items-center" style="gap: 8px;">
-                    <a href="/user/login" class="btn-login">登录</a>
-                    <a href="/user/register" class="btn-register">注册</a>
+                    <a href="/user/login" class="nav-btn-login">登录</a>
+                    <a href="/user/register" class="nav-btn-register">注册</a>
                 </span>
                 <span th:if="${user != null}" class="d-flex align-items-center">
                     <a href="/cart" class="nav-link-hover text-decoration-none me-3" style="color: var(--text-secondary);">
@@ -78,36 +77,60 @@
 
 <style>
     .nav-link-hover:hover { color: var(--primary) !important; }
-    .btn-login {
+    .topbar-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        text-decoration: none;
+        transition: all 0.2s;
+        line-height: 20px;
+        border: 1px solid rgba(255,255,255,0.6);
+        color: white;
+        margin-left: 8px;
+    }
+    .topbar-btn:hover {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        border-color: rgba(255,255,255,0.9);
+    }
+    .nav-btn-login {
         display: inline-block;
-        padding: 6px 18px;
+        padding: 6px 20px;
         background: white;
         color: var(--primary);
-        border: 1px solid var(--primary);
+        border: 1.5px solid var(--primary);
         border-radius: 20px;
         font-size: 13px;
+        font-weight: 500;
         text-decoration: none;
-        transition: all 0.15s;
+        transition: all 0.2s;
     }
-    .btn-login:hover {
+    .nav-btn-login:hover {
         background: var(--primary-light);
         color: var(--primary);
+        box-shadow: 0 2px 8px rgba(228,57,60,0.3);
     }
-    .btn-register {
+    .nav-btn-register {
         display: inline-block;
-        padding: 6px 18px;
+        padding: 6px 20px;
         background: var(--primary);
         color: white;
-        border: 1px solid var(--primary);
+        border: 1.5px solid var(--primary);
         border-radius: 20px;
         font-size: 13px;
+        font-weight: 600;
         text-decoration: none;
-        transition: all 0.15s;
+        transition: all 0.2s;
     }
-    .btn-register:hover {
+    .nav-btn-register:hover {
         background: var(--primary-dark);
         border-color: var(--primary-dark);
         color: white;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(228,57,60,0.3);
     }
 </style>
 

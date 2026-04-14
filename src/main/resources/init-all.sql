@@ -1,34 +1,15 @@
 -- ============================================================
--- 完整初始化脚本：清空并重新导入所有数据
--- 执行此文件前请确保数据库已存在
--- 执行后会清空所有数据重新导入
+-- 完整初始化脚本
+-- 首次执行前请确保数据库已存在
+-- 使用 CREATE TABLE IF NOT EXISTS，不会删除已有数据
+-- 如需重新初始化，请先手动 DROP TABLE 或清空数据库
 -- ============================================================
 
 SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 
 -- ============================================================
--- 第一部分：关闭外键检查并删除所有表
--- ============================================================
-SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS product_images;
-DROP TABLE IF EXISTS cart_items;
-DROP TABLE IF EXISTS reviews;
-DROP TABLE IF EXISTS complaints;
-DROP TABLE IF EXISTS refunds;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS shops;
-DROP TABLE IF EXISTS merchants;
-DROP TABLE IF EXISTS addresses;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS admins;
-
-SET FOREIGN_KEY_CHECKS = 1;
-
--- ============================================================
--- 第二部分：创建所有表（按外键依赖顺序）
+-- 第一部分：创建所有表（按外键依赖顺序，IF NOT EXISTS）
 -- ============================================================
 
 -- 用户表
@@ -210,7 +191,7 @@ CREATE TABLE admins (
 -- ============================================================
 -- 第三部分：基础数据（管理员账号）
 -- ============================================================
-INSERT INTO admins (username, password) VALUES ('lhh', '$2a$10$Kff8lRDm6XV3UcyTinDFjuig6Q6TbjefOPpT1dRJVPvxCfeAdP6b6');
+INSERT IGNORE INTO admins (username, password) VALUES ('lhh', '$2a$10$Kff8lRDm6XV3UcyTinDFjuig6Q6TbjefOPpT1dRJVPvxCfeAdP6b6');
 
 -- ============================================================
 -- 第四部分：商家数据

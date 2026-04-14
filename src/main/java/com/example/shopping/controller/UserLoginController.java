@@ -37,16 +37,13 @@ public class UserLoginController {
     @PostMapping("/user/login")
     public String login(@RequestParam String phone,
                         @RequestParam String password,
-                        HttpSession session,
-                        Model model) {
+                        HttpSession session) {
         User user = userMapper.findByPhone(phone);
         if (user == null) {
-            model.addAttribute("error", "手机号或密码错误");
-            return "user/login";
+            return "redirect:/user/login?error";
         }
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("error", "手机号或密码错误");
-            return "user/login";
+            return "redirect:/user/login?error";
         }
 
         session.setAttribute("user", user);

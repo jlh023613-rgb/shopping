@@ -48,6 +48,14 @@ public class OrderService {
         return orders;
     }
 
+    public List<Order> findAll() {
+        List<Order> orders = orderMapper.findAll();
+        for (Order order : orders) {
+            checkAndUpdateOrderStatus(order);
+        }
+        return orders;
+    }
+
     private void checkAndUpdateOrderStatus(Order order) {
         try {
             LocalDateTime now = LocalDateTime.now();

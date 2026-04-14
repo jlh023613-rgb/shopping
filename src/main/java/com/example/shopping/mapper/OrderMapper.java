@@ -16,4 +16,5 @@ public interface OrderMapper {
     void updateStatus(Order order);
     void update(Order order);
     List<Order> findPendingOrders();
+    List<Order> findAll();
 }

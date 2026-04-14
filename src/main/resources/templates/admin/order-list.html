@@ -277,6 +277,18 @@
             font-weight: 700;
             color: var(--text-white);
         }
+        .table > :not(caption) > * > * {
+            background-color: var(--bg-card) !important;
+            color: var(--text-white) !important;
+            border-color: var(--border) !important;
+        }
+        .table > thead > * > * {
+            background-color: rgba(124, 58, 237, 0.15) !important;
+            color: var(--primary-light) !important;
+        }
+        .table > tbody > tr:hover > * {
+            background-color: var(--bg-card-hover) !important;
+        }
     </style>
 </head>
 <body>

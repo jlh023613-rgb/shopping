@@ -96,24 +96,19 @@ public class MerchantController {
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        HttpSession session,
-                        Model model) {
+                        HttpSession session) {
         Merchant merchant = merchantMapper.findByUsername(username);
         if (merchant == null) {
-            model.addAttribute("error", "账号不存在");
-            return "merchant/login";
+            return "redirect:/merchant/login?error";
         }
         if (!passwordEncoder.matches(password, merchant.getPassword())) {
-            model.addAttribute("error", "密码错误");
-            return "merchant/login";
+            return "redirect:/merchant/login?error";
         }
         if ("pending".equals(merchant.getStatus())) {
-            model.addAttribute("error", "账号待审核，请等待管理员审核通过");
-            return "merchant/login";
+            return "redirect:/merchant/login?pending";
         }
         if ("closed".equals(merchant.getStatus())) {
-            model.addAttribute("error", "店铺已被关停，无法登录");
-            return "merchant/login";
+            return "redirect:/merchant/login?closed";
         }
 
         session.setAttribute("merchant", merchant);

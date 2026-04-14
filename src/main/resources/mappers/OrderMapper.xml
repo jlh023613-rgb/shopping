@@ -37,6 +37,13 @@
         SELECT * FROM orders WHERE status = 'pending'
     </select>
 
+    <select id="findAll" resultType="com.example.shopping.entity.Order">
+        SELECT o.*, m.shop_name as merchantShopName, u.username FROM orders o
+        LEFT JOIN merchants m ON o.merchant_id = m.id
+        LEFT JOIN users u ON o.user_id = u.id
+        ORDER BY o.id DESC
+    </select>
+
     <update id="updateStatus" parameterType="com.example.shopping.entity.Order">
         UPDATE orders SET status = #{status} WHERE id = #{id}
     </update>

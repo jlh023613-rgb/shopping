@@ -369,10 +369,15 @@
             <div class="card product-card h-100">
                 <a th:href="@{/product/{id}(id=${p.id})}" class="text-decoration-none">
                     <div class="img-wrapper d-flex align-items-center justify-content-center">
-                        <img th:if="${p.imageUrl != null}" th:src="${p.imageUrl}" class="product-img" alt="商品图">
-                        <div th:unless="${p.imageUrl != null}" class="text-secondary text-center" style="font-size: 12px;">
-                            暂无图片
-                        </div>
+                        <th:block th:if="${productImages != null and productImages[p.id] != null and !productImages[p.id].isEmpty()}">
+                            <img th:src="${productImages[p.id][0].imageUrl}" class="product-img" alt="商品图">
+                        </th:block>
+                        <th:block th:if="${productImages == null or productImages[p.id] == null or productImages[p.id].isEmpty()}">
+                            <img th:if="${p.imageUrl != null}" th:src="${p.imageUrl}" class="product-img" alt="商品图">
+                            <div th:if="${p.imageUrl == null}" class="text-secondary text-center" style="font-size: 12px;">
+                                暂无图片
+                            </div>
+                        </th:block>
                     </div>
                 </a>
                 

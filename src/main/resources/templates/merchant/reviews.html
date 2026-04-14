@@ -5,87 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>评价管理</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root { --primary: #FF4400; --primary-dark: #E63E00; --primary-light: #FFF5F0; --bg: #F5F5F5; --border: #e8e8e8; --text-dark: #333; --text-secondary: #666; --text-muted: #999; }
-        body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 13px; color: var(--text-dark); margin: 0; }
-        .sidebar { background: white; border-right: 1px solid var(--border); min-height: 100vh; padding-top: 0; }
-        .sidebar-header { background: var(--primary); color: white; padding: 16px 16px 12px; }
-        .sidebar-header h5 { margin: 0; font-size: 15px; font-weight: 700; }
-        .sidebar .nav-link { color: var(--text-dark); padding: 10px 16px; border-radius: 0; margin: 0; font-size: 13px; border-left: 3px solid transparent; }
-        .sidebar .nav-link:hover { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); }
-        .sidebar .nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 600; border-left-color: var(--primary); }
-        .content-area { padding: 20px; }
-        .page-title { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
-        .review-card { background: white; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 10px; }
-        .review-card .review-body { padding: 12px 14px; }
-        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .review-username { font-weight: 600; font-size: 13px; }
-        .review-stars { color: var(--primary); font-size: 12px; margin-left: 6px; }
+        :root {
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --bg-card-hover: #21262D;
+            --primary: #58A6FF;
+            --primary-glow: rgba(88, 166, 255, 0.3);
+            --text-white: #F0F6FC;
+            --text-gray: #8B949E;
+            --text-muted: #6E7681;
+            --border: #30363D;
+            --success: #3FB950;
+            --warning: #D29922;
+            --danger: #F85149;
+        }
+        * { box-sizing: border-box; }
+        body { background: var(--bg-dark); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 13px; color: var(--text-white); margin: 0; min-height: 100vh; }
+        .sidebar { background: var(--bg-card); width: 220px; min-height: 100vh; position: fixed; left: 0; top: 0; border-right: 1px solid var(--border); }
+        .sidebar-header { padding: 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .shop-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, #1f6feb 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; }
+        .shop-info h5 { margin: 0; font-size: 14px; font-weight: 600; color: var(--primary); }
+        .shop-info small { color: var(--text-gray); font-size: 11px; }
+        .sidebar-nav { padding: 12px 0; }
+        .nav-item { display: block; padding: 10px 16px; color: var(--text-gray); text-decoration: none; font-size: 13px; border-left: 3px solid transparent; transition: all 0.15s; display: flex; align-items: center; gap: 10px; }
+        .nav-item:hover { background: var(--bg-card-hover); color: var(--text-white); }
+        .nav-item.active { background: rgba(88, 166, 255, 0.15); color: var(--text-white); border-left-color: var(--primary); }
+        .nav-item i { font-size: 16px; width: 20px; text-align: center; }
+        .nav-item.logout { color: var(--danger); margin-top: 20px; }
+        .nav-item.logout:hover { background: rgba(248, 81, 73, 0.15); }
+        .content-area { margin-left: 220px; padding: 24px; min-height: 100vh; }
+        .page-title { font-size: 20px; font-weight: 600; color: var(--text-white); margin-bottom: 24px; }
+        .review-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: all 0.2s; }
+        .review-card:hover { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+        .review-body { padding: 16px; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .review-username { font-weight: 600; font-size: 14px; color: var(--text-white); }
+        .review-stars { color: var(--warning); font-size: 12px; margin-left: 6px; }
         .review-product { color: var(--text-muted); font-size: 11px; margin-left: 8px; }
         .review-date { color: var(--text-muted); font-size: 11px; }
-        .review-content { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
-        .reply-box { background: var(--primary-light); border: 1px solid #FFCCBC; border-radius: 2px; padding: 8px 10px; margin-top: 8px; font-size: 12px; }
+        .review-content { color: var(--text-gray); font-size: 13px; margin-top: 6px; line-height: 1.6; }
+        .reply-box { background: var(--bg-card-hover); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; margin-top: 10px; font-size: 12px; }
         .reply-label { color: var(--primary); font-weight: 600; font-size: 11px; }
-        .reply-text { color: var(--text-secondary); }
-        .reply-form { margin-top: 8px; }
-        .reply-input { border-radius: 2px; border: 1px solid var(--border); font-size: 12px; padding: 6px 10px; }
-        .reply-input:focus { border-color: var(--primary); box-shadow: 0 0 0 0.15rem rgba(255,68,0,0.15); outline: none; }
-        .btn-reply { background: var(--primary); color: white; border: none; border-radius: 2px; font-size: 11px; padding: 6px 12px; font-weight: 500; }
-        .btn-reply:hover { background: var(--primary-dark); color: white; }
-        .empty-state { text-align: center; padding: 40px 0; color: var(--text-muted); }
+        .reply-text { color: var(--text-gray); }
+        .reply-form { margin-top: 10px; }
+        .reply-input { background: var(--bg-card-hover); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; padding: 8px 12px; color: var(--text-white); width: 100%; }
+        .reply-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); outline: none; color: var(--text-white); }
+        .reply-input::placeholder { color: var(--text-muted); }
+        .btn-reply { background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 12px; padding: 6px 16px; font-weight: 500; transition: all 0.2s; }
+        .btn-reply:hover { background: #1f6feb; color: white; box-shadow: 0 0 15px var(--primary-glow); }
+        .empty-state { text-align: center; padding: 60px 0; color: var(--text-muted); }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; display: block; }
+        .table > :not(caption) > * > * { background-color: var(--bg-card) !important; color: var(--text-white) !important; border-color: var(--border) !important; }
+        .table > thead > * > * { background-color: var(--bg-dark) !important; color: var(--primary) !important; }
+        .table > tbody > tr:hover > * { background-color: var(--bg-card-hover) !important; }
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2 sidebar">
-            <div class="sidebar-header">
-                <h5 th:text="${merchant.shopName}">店铺名称</h5>
-            </div>
-            <nav class="nav flex-column">
-                <a class="nav-link" href="/merchant/dashboard">概览</a>
-                <a class="nav-link" href="/merchant/products">商品管理</a>
-                <a class="nav-link" href="/merchant/orders">订单管理</a>
-                <a class="nav-link" href="/merchant/refunds">退款管理</a>
-                <a class="nav-link active" href="/merchant/reviews">评价管理</a>
-                <a class="nav-link" href="/merchant/logout">退出登录</a>
-            </nav>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="shop-avatar"><i class="bi bi-shop"></i></div>
+        <div class="shop-info">
+            <h5 th:text="${merchant.shopName}">店铺名称</h5>
+            <small>商家后台</small>
         </div>
-        <div class="col-md-10 content-area">
-            <div class="page-title">评价管理</div>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="/merchant/dashboard"><i class="bi bi-speedometer2"></i>概览</a>
+        <a class="nav-item" href="/merchant/products"><i class="bi bi-box-seam"></i>商品管理</a>
+        <a class="nav-item" href="/merchant/orders"><i class="bi bi-receipt"></i>订单管理</a>
+        <a class="nav-item" href="/merchant/refunds"><i class="bi bi-arrow-return-left"></i>退款管理</a>
+        <a class="nav-item active" href="/merchant/reviews"><i class="bi bi-star"></i>评价管理</a>
+        <a class="nav-item logout" href="/merchant/logout"><i class="bi bi-box-arrow-left"></i>退出登录</a>
+    </nav>
+</div>
 
-            <div th:if="${reviews == null or reviews.isEmpty()}" class="empty-state">
-                <p>暂无评价</p>
-            </div>
+<div class="content-area">
+    <div class="page-title">评价管理</div>
 
-            <div th:each="review : ${reviews}" class="review-card">
-                <div class="review-body">
-                    <div class="review-header">
-                        <div>
-                            <span class="review-username" th:text="${review.username}"></span>
-                            <span class="review-stars">
-                                <span th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
-                            </span>
-                            <span class="review-product" th:text="${review.productName}"></span>
-                        </div>
-                        <span class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"></span>
-                    </div>
-                    <div class="review-content" th:text="${review.content}"></div>
-                    <div th:if="${review.merchantReply != null}" class="reply-box">
-                        <span class="reply-label">商家回复：</span>
-                        <span class="reply-text" th:text="${review.merchantReply}"></span>
-                    </div>
-                    <form th:if="${review.merchantReply == null}" th:action="@{/merchant/review/reply/{id}(id=${review.id})}" method="post" class="reply-form">
-                        <div style="display:flex;gap:6px">
-                            <input type="text" name="merchantReply" class="reply-input" style="flex:1" placeholder="回复评价..." required>
-                            <button type="submit" class="btn-reply">回复</button>
-                        </div>
-                    </form>
+    <div th:if="${reviews == null or reviews.isEmpty()}" class="empty-state">
+        <i class="bi bi-star"></i>
+        <p>暂无评价</p>
+    </div>
+
+    <div th:each="review : ${reviews}" class="review-card">
+        <div class="review-body">
+            <div class="review-header">
+                <div>
+                    <span class="review-username" th:text="${review.username}"></span>
+                    <span class="review-stars">
+                        <span th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
+                    </span>
+                    <span class="review-product" th:text="${review.productName}"></span>
                 </div>
+                <span class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"></span>
             </div>
+            <div class="review-content" th:text="${review.content}"></div>
+            <div th:if="${review.merchantReply != null}" class="reply-box">
+                <span class="reply-label">商家回复：</span>
+                <span class="reply-text" th:text="${review.merchantReply}"></span>
+            </div>
+            <form th:if="${review.merchantReply == null}" th:action="@{/merchant/review/reply/{id}(id=${review.id})}" method="post" class="reply-form">
+                <div style="display:flex;gap:8px">
+                    <input type="text" name="merchantReply" class="reply-input" style="flex:1" placeholder="回复评价..." required>
+                    <button type="submit" class="btn-reply">回复</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
